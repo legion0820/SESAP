@@ -6,7 +6,6 @@ const ContentVisulization = styled.div`
     margin: 0 auto; /* Center the content */
     max-width: 800px; /* Optional: limit the width for better readability */
     padding: 0px; /* Optional: add some padding around the content */
-    padding-bottom: 50px;
 `;
 
 const ContainerVisulization = styled.div`
@@ -22,6 +21,7 @@ const Paragraph = styled.p`
     text-align: left; /* Optional: Align text to the left */
     line-height: 1.5; /* Add spacing for better readability */
     font-style: italic; /* Make the text italic */
+    
 `;
 
 const Header = styled.h1`

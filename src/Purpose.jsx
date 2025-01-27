@@ -11,6 +11,7 @@ const Paragraph = styled.p` /* Use <p> for paragraphs, not <li> */
     font-size: 16px; /* Explicitly set font size */
     text-align: left; /* Optional: Align text to the left */
     line-height: 1.5; /* Add spacing for better readability */
+    text-indent: 40px;
 `;
 
 const PurposeContainer = styled.div` /* Use <div> instead of <h1> */

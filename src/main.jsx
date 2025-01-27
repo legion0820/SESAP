@@ -19,9 +19,24 @@ const globalStyles = css`
     html {
         font-family: "Fredoka", sans-serif;
     }
+
     body {
-        margin: 0px;
+    padding: 0px;
+    margin: 0px;
+    background-color: #212529; 
+    color: white;
+    text-align: center;
+    // padding-bottom: 100px;
+    }
+
+    .nav-link {
+    color: white; /* White text */
+    text-decoration: none; /* Remove underline */
+    font-size: 18px; /* Make the text a bit bigger */
 }
+
+
+
 `
 
 const router = createBrowserRouter([
