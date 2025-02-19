@@ -244,7 +244,7 @@ function NarrativePage() {
           </DialogHeader>
           <form onSubmit={handleSubmit}>
             <div style={{ marginBottom: "20px" }}>
-              <h4 style={{ margin: "0 0 10px 0", color: "black" }}>Name</h4>
+              <h4 style={{ margin: "0 0 10px 0", color: "black" }}>Interviewee Name</h4>
               <input
                 id="name"
                 type="text"
@@ -255,12 +255,34 @@ function NarrativePage() {
               />
             </div>
             <div style={{ marginBottom: "20px" }}>
-              <h4 style={{ margin: "0 0 10px 0", color: "black" }}>Date</h4>
+              <h4 style={{ margin: "0 0 10px 0", color: "black" }}>Interviewer Name</h4>
+              <input
+                id="name"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                style={{ width: "100%", padding: "8px", boxSizing: "border-box" }}
+              />
+            </div>
+            <div style={{ marginBottom: "20px" }}>
+              <h4 style={{ margin: "0 0 10px 0", color: "black" }}>Date of Interview</h4>
               <input
                 id="date"
                 type="text"
                 value={new Date().toLocaleDateString()} // Automatically set the current date
                 readOnly
+                style={{ width: "100%", padding: "8px", boxSizing: "border-box" }}
+              />
+            </div>
+            <div style={{ marginBottom: "20px" }}>
+              <h4 style={{ margin: "0 0 10px 0", color: "black" }}>Upload Text File</h4>
+              <input
+                id="text-file"
+                type="file"
+                accept=".txt"
+                onChange={(e) => setTextFile(e.target.files[0])} // Handle text file change
+                required
                 style={{ width: "100%", padding: "8px", boxSizing: "border-box" }}
               />
             </div>
