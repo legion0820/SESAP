@@ -265,6 +265,19 @@ function NarrativePage() {
   const [interviewerName, setInterviewerName] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedThemes, setSelectedThemes] = useState([]);
+  const [interviewDate, setInterviewDate] = useState("");
+  const [videoFiles, setVideoFiles] = useState([]);
+  const [textFiles, setTextFiles] = useState([]);
+
+  // Handle video file selection
+  const handleVideoChange = (e) => {
+    const file = e.target.files[0]; // Get the first file (for simplicity)
+    setVideoFile(file);
+  };
+
+  // Video preview URL (if a video file is selected)
+  const videoPreviewUrl = videoFile ? URL.createObjectURL(videoFile) : null;
+
 
   const handleVideoClick = (narrative) => {
     navigate("/interview-video", { 
@@ -278,9 +291,10 @@ function NarrativePage() {
       intervieweeName,
       interviewerName,
       description,
-      videoFile: videoFile ? videoFile.name : "No file uploaded",
-      textFile: textFile ? textFile.name : "No file uploaded",
-      date: new Date().toLocaleDateString(),
+      interviewDate,
+      videoFiles: videoFiles.length ? videoFiles.map(file => file.name) : ["No file uploaded"],
+      textFiles: textFiles.length ? textFiles.map(file => file.name) : ["No file uploaded"],
+      // date: new Date().toLocaleDateString(),
       themes: selectedThemes
     };
     setNarratives([...narratives, newNarrative]);
@@ -314,7 +328,7 @@ function NarrativePage() {
     const searchMatch = 
       narrative.intervieweeName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       narrative.interviewerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      narrative.date.toLowerCase().includes(searchTerm.toLowerCase());
+      narrative.interviewDate.toLowerCase().includes(searchTerm.toLowerCase());
     
     return searchMatch;
   });
@@ -383,22 +397,22 @@ function NarrativePage() {
               />
             </div>
             <div style={{ marginBottom: "20px" }}>
-              <h4 style={{ margin: "0 0 10px 0", color: "black" }}>Date of Interview</h4>
+              <h4>Interview Date</h4>
               <input
-                id="date"
-                type="text"
-                value={new Date().toLocaleDateString()}
-                readOnly
+                type="date"
+                value={interviewDate}
+                onChange={(e) => setInterviewDate(e.target.value)}
+                required
                 style={{ width: "100%", padding: "8px", boxSizing: "border-box" }}
               />
             </div>
             <div style={{ marginBottom: "20px" }}>
-              <h4 style={{ margin: "0 0 10px 0", color: "black" }}>Upload Text File</h4>
+              <h4 style={{ margin: "0 0 10px 0", color: "black" }}>Upload Transcript File</h4>
               <input
                 id="text-file"
                 type="file"
-                accept=".txt"
-                onChange={(e) => setTextFile(e.target.files[0])}
+                multiple
+                onChange={(e) => setTextFiles(Array.from(e.target.files))}
                 required
                 style={{ width: "100%", padding: "8px", boxSizing: "border-box" }}
               />
@@ -409,10 +423,20 @@ function NarrativePage() {
                 id="video"
                 type="file"
                 accept="video/*"
-                onChange={(e) => setVideoFile(e.target.files[0])}
+                onChange={handleVideoChange} // Handle video file change
                 required
                 style={{ width: "100%", padding: "8px", boxSizing: "border-box" }}
               />
+              {/* Display video preview if a video file is selected */}
+              {videoPreviewUrl && (
+                <div style={{ marginTop: "20px" }}>
+                  <h4>Video Preview:</h4>
+                  <video controls width="100%">
+                    <source src={videoPreviewUrl} type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
+              )}
             </div>
             <div style={{ marginBottom: "20px" }}>
               <h4 style={{ margin: "0 0 10px 0", color: "black" }}>Description</h4>
@@ -434,19 +458,20 @@ function NarrativePage() {
         <VideoContainer>
           {filteredNarratives.map((narrative, index) => (
             <VideoContent 
-              key={index}
-              onClick={() => handleVideoClick(narrative)}
-              style={{ cursor: 'pointer' }}
-            >
-              <h3>{narrative.intervieweeName}</h3>
-              <p><strong>Interviewer:</strong> {narrative.interviewerName}</p>
-              <p><strong>Date:</strong> {narrative.date}</p>
-              <p><strong>Description:</strong> {narrative.description}</p>
-              <p><strong>Video File:</strong> {narrative.videoFile ? "Video uploaded" : "No video"}</p>
-              {narrative.themes && narrative.themes.length > 0 && (
-                <p><strong>Themes:</strong> {narrative.themes.join(", ")}</p>
-              )}
-            </VideoContent>
+            key={index}
+            onClick={() => handleVideoClick(narrative)}
+            style={{ cursor: 'pointer' }}
+          >
+            <h3>{narrative.intervieweeName}</h3>
+            <p><strong>Interviewer:</strong> {narrative.interviewerName}</p>
+            <p><strong>Date:</strong> {narrative.interviewDate}</p> {/* Use interviewDate here */}
+            <p><strong>Description:</strong> {narrative.description}</p>
+            <p><strong>Video Files:</strong> {narrative.videoFiles.join(", ")}</p>
+            <p><strong>Text Files:</strong> {narrative.textFiles.join(", ")}</p>
+            {narrative.themes && narrative.themes.length > 0 && (
+              <p><strong>Themes:</strong> {narrative.themes.join(", ")}</p>
+            )}
+          </VideoContent>
           ))}
         </VideoContainer>
       </Content>
