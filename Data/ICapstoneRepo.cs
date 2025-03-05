@@ -7,6 +7,8 @@ namespace CapstoneController.Data{
         Task<IEnumerable<Transcripts>> GetAllTranscripts();
         Task CreateTranscript(Transcripts transcripts);
 
+        Task CreateInterview(Interviews interviews);
+
         void DeleteTranscript(Transcripts transcripts);
     }
 }

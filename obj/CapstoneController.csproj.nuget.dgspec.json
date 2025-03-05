@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\nealj\\source\\repos\\CAPSTONE_CONTROLLER\\CapstoneController\\CapstoneController.csproj": {}
+    "C:\\Users\\nealj\\source\\repos\\CAPSTONE_PROJECT\\SESAP\\CapstoneController.csproj": {}
   },
   "projects": {
-    "C:\\Users\\nealj\\source\\repos\\CAPSTONE_CONTROLLER\\CapstoneController\\CapstoneController.csproj": {
+    "C:\\Users\\nealj\\source\\repos\\CAPSTONE_PROJECT\\SESAP\\CapstoneController.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\nealj\\source\\repos\\CAPSTONE_CONTROLLER\\CapstoneController\\CapstoneController.csproj",
+        "projectUniqueName": "C:\\Users\\nealj\\source\\repos\\CAPSTONE_PROJECT\\SESAP\\CapstoneController.csproj",
         "projectName": "CapstoneController",
-        "projectPath": "C:\\Users\\nealj\\source\\repos\\CAPSTONE_CONTROLLER\\CapstoneController\\CapstoneController.csproj",
+        "projectPath": "C:\\Users\\nealj\\source\\repos\\CAPSTONE_PROJECT\\SESAP\\CapstoneController.csproj",
         "packagesPath": "C:\\Users\\nealj\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\nealj\\source\\repos\\CAPSTONE_CONTROLLER\\CapstoneController\\obj\\",
+        "outputPath": "C:\\Users\\nealj\\source\\repos\\CAPSTONE_PROJECT\\SESAP\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\nealj\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -54,17 +54,17 @@
             },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
-              "version": "[9.0.1, )"
+              "version": "[9.0.2, )"
             },
             "Microsoft.EntityFrameworkCore.Design": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",
               "target": "Package",
-              "version": "[9.0.1, )"
+              "version": "[9.0.2, )"
             },
-            "Microsoft.EntityFrameworkCore.SqlServer": {
+            "Pomelo.EntityFrameworkCore.MySql": {
               "target": "Package",
-              "version": "[9.0.1, )"
+              "version": "[9.0.0-preview.3.efcore.9.0.0, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",

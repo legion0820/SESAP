@@ -25,6 +25,14 @@ namespace CapstoneController.Data{
             await _context.Transcripts.AddAsync(transcripts);
         }
 
+        public async Task CreateInterview(Interviews interviews){
+            if (interviews == null){
+                throw new ArgumentNullException(nameof(interviews));
+            }
+
+            await _context.Interviews.AddAsync(interviews);
+        }
+
         public void DeleteTranscript(Transcripts transcripts){
             if(transcripts == null){
                 throw new ArgumentNullException(nameof(transcripts));

@@ -1,5 +1,6 @@
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Pomelo.EntityFrameworkCore.MySql;
 using CapstoneController.Data;
 using AutoMapper;
 using CapstoneController.Dtos;
@@ -13,11 +14,11 @@ builder.Services.AddSwaggerGen();
 
 var sqlConBuilder = new SqlConnectionStringBuilder();
 
-sqlConBuilder.ConnectionString = builder.Configuration.GetConnectionString("SQLDbConnection");
-sqlConBuilder.UserID = builder.Configuration["UserId"];
-sqlConBuilder.Password = builder.Configuration["Password"];
+sqlConBuilder.ConnectionString = builder.Configuration.GetConnectionString("MariaDbConnection");
+//sqlConBuilder.UserID = builder.Configuration["UserId"];
+//sqlConBuilder.Password = builder.Configuration["Password"];
 
-builder.Services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(sqlConBuilder.ConnectionString));
+builder.Services.AddDbContext<AppDbContext>(opt => opt.UseMySql(sqlConBuilder.ConnectionString, new MySqlServerVersion(new Version(10, 11, 10))));
 builder.Services.AddScoped<ICapstoneRepo, CapstoneRepo>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
@@ -44,6 +45,16 @@ app.MapPost("api/v1/transcripts", async (ICapstoneRepo repo, IMapper mapper, Tra
     await repo.SaveChanges();
 
     return Results.Created($"{transcriptDto}", transcriptDto);
+});
+
+/* Stores interview information from frontend to database */
+app.MapPost("api/v1/interviews", async (ICapstoneRepo repo, IMapper mapper, InterviewDto interviewDto) => {
+    var interviewmodel = mapper.Map<Interviews>(interviewDto);
+
+    await repo.CreateInterview(interviewmodel);
+    await repo.SaveChanges();
+
+    return Results.Created($"{interviewDto}", interviewDto);
 });
 
 app.Run();

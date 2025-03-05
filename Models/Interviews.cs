@@ -1,4 +1,6 @@
+using CapstoneController.Data;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 namespace CapstoneController.Models{
     public class Interviews{
         [Key]
@@ -11,6 +13,10 @@ namespace CapstoneController.Models{
         public string? interviewerName {get; set;}
 
         [Required]
+        [JsonConverter(typeof(DateOnlyConverter))]
         public DateOnly? interviewDate {get; set;}
+
+        [Required]
+        public string? interviewDesc {get; set;}
     }
 }
