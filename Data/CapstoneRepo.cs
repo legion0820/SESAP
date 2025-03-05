@@ -33,12 +33,16 @@ namespace CapstoneController.Data{
             await _context.Interviews.AddAsync(interviews);
         }
 
-        public void DeleteTranscript(Transcripts transcripts){
-            if(transcripts == null){
-                throw new ArgumentNullException(nameof(transcripts));
+        public async Task<Interviews?> GetInterviewById(int id){
+            return await _context.Interviews.FirstOrDefaultAsync(c => c.interviewId == id);
+        }
+
+        public void DeleteInterview(Interviews interviews){
+            if(interviews == null){
+                throw new ArgumentNullException(nameof(interviews));
             }
 
-            _context.Transcripts.Remove(transcripts);
+            _context.Interviews.Remove(interviews);
         }
     }
 }

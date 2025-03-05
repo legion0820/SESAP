@@ -9,6 +9,8 @@ namespace CapstoneController.Data{
 
         Task CreateInterview(Interviews interviews);
 
-        void DeleteTranscript(Transcripts transcripts);
+        Task<Interviews?> GetInterviewById(int id);
+
+        void DeleteInterview(Interviews interviews);
     }
 }

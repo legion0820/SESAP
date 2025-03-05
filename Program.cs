@@ -57,6 +57,20 @@ app.MapPost("api/v1/interviews", async (ICapstoneRepo repo, IMapper mapper, Inte
     return Results.Created($"{interviewDto}", interviewDto);
 });
 
+/* Deletes an interview from the database with a specific id */
+app.MapDelete("api/v1/interviews/{id}", async (ICapstoneRepo repo, IMapper mapper, int id) => {
+    var interview = await repo.GetInterviewById(id);
+    if (interview == null){
+        return Results.NotFound();
+    }
+
+    repo.DeleteInterview(interview);
+
+    await repo.SaveChanges();
+
+    return Results.NoContent();
+});
+
 app.Run();
 
 
