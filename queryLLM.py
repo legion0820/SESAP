@@ -11,13 +11,15 @@ from collections import defaultdict
 CHROMA_PATH = "chroma"
 
 PROMPT_TEMPLATE = """
-Answer the question based only on the following context:
+Analyze the following student interview transcript and extract key themes and topics:
 
 {context}
 
 ---
 
-Answer the question based on the above context: {question}
+List the main, distinctive topics discussed in this transcript from most significant to least. 
+Do not include "Background" as a topic name. Instead, label the topic to represent specifically for the student.
+Separate the topic name and description with a colon.
 """
 
 
@@ -33,12 +35,13 @@ def configure():
     load_dotenv()
 
 def openrouterEndpoint(prompt):
+    # print(f"API Key: {os.getenv('apiKey')}")
     headers = {
         "Authorization": f"Bearer {os.getenv('apiKey')}",
         "Content-Type": "application/json",
     }
     payload = {
-        "model": "deepseek/deepseek-r1-distill-llama-70b:free",
+        "model": "mistralai/mistral-7b-instruct:free",
         "messages": [{"role": "system", "content": "You are an AI assistant."},
                      {"role": "user", "content": prompt}],
         "max_tokens": 500,
@@ -52,31 +55,37 @@ def openrouterEndpoint(prompt):
     else:
         return f"Error {response.status_code}: {response.text}"
     
-def query_rag(query_text: str):
-    # Prepare the DB.
+def query_rag(transcriptFileName: str):
+    print(f"Querying Chroma DB for transcript file: {transcriptFileName}...")
     embeddings = getEmbeddings()
     db = Chroma(persist_directory=CHROMA_PATH, embedding_function=embeddings)
 
-    # Search the DB.
-    results = db.get(include=["documents", "metadatas"])
+    #get all chunks of matching transcript
+    matchingChunks = db.get(include=["documents", "metadatas"])
+    documents_list = matchingChunks["documents"]  # List of document texts
+    metadatas_list = matchingChunks["metadatas"]
+    fullTranscriptChunks = [
+        documents_list[i]  # Get document text at index i
+        for i, metadata in enumerate(metadatas_list)
+        if metadata.get("source") and transcriptFileName in metadata.get("source")
+    ]
 
-    transcript_chunks = defaultdict(list)
-    for doc, metadata in zip(results["documents"], results["metadatas"]):
-        transcript_id = metadata.get("source", "unknown_transcript")
-        transcript_chunks[transcript_id].append(doc)
-    
-    for transcript_id, chunks in transcript_chunks.items():
-        contextChunks = "\n\n---\n\n".join(chunks)  #combine all chunks from the same transcript
-        promptTemplate = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
-        prompt = promptTemplate.format(context=contextChunks, question=query_text)
-        # print(prompt)
+    if not fullTranscriptChunks:
+        print(f"No transcript retrieved for {transcriptFileName}.")
+        return None
 
-        responseLLM = openrouterEndpoint(prompt)
+    #format transcript text into llm prompt context
+    context_text = "\n\n---\n\n".join(fullTranscriptChunks)
+    prompt_template = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
+    prompt = prompt_template.format(context=context_text)
+    print(prompt)
 
-        # sources = [doc.metadata.get("id", None) for doc, _score in results]
-        # responseFormatted = f"Response: {responseLLM}\nSources: {sources}"
-        # print(responseFormatted)
-        print(responseLLM)
+    responseLLM = openrouterEndpoint(prompt)
+
+    # sources = [doc.metadata.get("id", None) for doc, _score in results]
+    # responseFormatted = f"Response: {responseLLM}\nSources: {sources}"
+    # print(responseFormatted)
+    print(responseLLM)
     return responseLLM
 
 
