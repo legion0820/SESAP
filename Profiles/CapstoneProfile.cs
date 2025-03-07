@@ -8,6 +8,7 @@ namespace CapstoneController.Profiles{
             // Source -> Target
             CreateMap<TranscriptDto, Transcripts>();
             CreateMap<InterviewDto, Interviews>();
+            CreateMap<Interviews, InterviewDto>();
         }
     }
 }

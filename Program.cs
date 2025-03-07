@@ -33,11 +33,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapGet("api/v1/transcripts", async (ICapstoneRepo repo, IMapper mapper) => {
-    var transcripts = await repo.GetAllTranscripts();
-    return Results.Ok(mapper.Map<IEnumerable<TranscriptDto>>(transcripts));
-});
-
 app.MapPost("api/v1/transcripts", async (ICapstoneRepo repo, IMapper mapper, TranscriptDto transcriptDto) => {
     var transcriptmodel = mapper.Map<Transcripts>(transcriptDto);
 
@@ -69,6 +64,12 @@ app.MapDelete("api/v1/interviews/{id}", async (ICapstoneRepo repo, IMapper mappe
     await repo.SaveChanges();
 
     return Results.NoContent();
+});
+
+/* Gets all the interviews from the database to the frontend */
+app.MapGet("api/v1/interviews", async (ICapstoneRepo repo, IMapper mapper) => {
+    var interviews = await repo.GetAllInterviews();
+    return Results.Ok(mapper.Map<IEnumerable<InterviewDto>>(interviews));
 });
 
 app.Run();

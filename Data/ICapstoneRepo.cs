@@ -4,7 +4,7 @@ namespace CapstoneController.Data{
     public interface ICapstoneRepo{
         Task SaveChanges();
     
-        Task<IEnumerable<Transcripts>> GetAllTranscripts();
+        Task<IEnumerable<Interviews>> GetAllInterviews();
         Task CreateTranscript(Transcripts transcripts);
 
         Task CreateInterview(Interviews interviews);

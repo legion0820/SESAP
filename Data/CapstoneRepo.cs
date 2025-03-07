@@ -14,8 +14,8 @@ namespace CapstoneController.Data{
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<Transcripts>> GetAllTranscripts(){
-            return await _context.Transcripts.ToListAsync();
+        public async Task<IEnumerable<Interviews>> GetAllInterviews(){
+            return await _context.Interviews.ToListAsync();
         }
         public async Task CreateTranscript(Transcripts transcripts){
             if(transcripts == null){
