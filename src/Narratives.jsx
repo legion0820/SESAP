@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "@emotion/styled";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 // Button Component
 const Button = ({ onClick, children, type }) => {
@@ -18,9 +19,9 @@ const Button = ({ onClick, children, type }) => {
         fontSize: "16px",
         fontWeight: "500",
         transition: "background-color 0.2s",
-        ':hover': {
-          backgroundColor: "#0b5ed7"
-        }
+        ":hover": {
+          backgroundColor: "#0b5ed7",
+        },
       }}
     >
       {children}
@@ -50,7 +51,7 @@ const Dialog = ({ open, onOpenChange, children }) => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        zIndex: 1000
+        zIndex: 1000,
       }}
       onClick={handleOverlayClick}
     >
@@ -63,7 +64,7 @@ const Dialog = ({ open, onOpenChange, children }) => {
           width: "400px",
           position: "relative",
           maxHeight: "90vh",
-          overflowY: "auto"
+          overflowY: "auto",
         }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -100,7 +101,7 @@ const DialogClose = ({ onClick }) => {
         fontSize: "20px",
         color: "#666",
         padding: "5px",
-        lineHeight: 1
+        lineHeight: 1,
       }}
     >
       ×
@@ -269,46 +270,86 @@ function NarrativePage() {
   const [videoFiles, setVideoFiles] = useState([]);
   const [textFiles, setTextFiles] = useState([]);
 
+  // Fetch narratives on component mount
+  useEffect(() => {
+    fetchNarratives();
+  }, []);
+
+  const fetchNarratives = async () => {
+    try {
+      const response = await axios.get("http://localhost:5000/api/narratives");
+      setNarratives(response.data);
+    } catch (error) {
+      console.error("Error fetching narratives:", error);
+    }
+  };
+
   // Handle video file selection
   const handleVideoChange = (e) => {
-    const file = e.target.files[0]; // Get the first file (for simplicity)
-    setVideoFile(file);
+    const files = Array.from(e.target.files);
+    setVideoFiles(files);
+    if (files.length > 0) {
+      setVideoFile(files[0]); // For preview
+    }
   };
 
   // Video preview URL (if a video file is selected)
   const videoPreviewUrl = videoFile ? URL.createObjectURL(videoFile) : null;
 
-
   const handleVideoClick = (narrative) => {
-    navigate("/interview-video", { 
-      state: { narrative }
+    navigate(`/interview-video/${narrative.id}`, {
+      state: narrative
     });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const newNarrative = {
-      intervieweeName,
-      interviewerName,
-      description,
-      interviewDate,
-      videoFiles: videoFiles.length ? videoFiles.map(file => file.name) : ["No file uploaded"],
-      textFiles: textFiles.length ? textFiles.map(file => file.name) : ["No file uploaded"],
-      // date: new Date().toLocaleDateString(),
-      themes: selectedThemes
-    };
-    setNarratives([...narratives, newNarrative]);
-    setIsModalOpen(false);
-    resetForm();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+  
+    try {
+      const formData = new FormData();
+      formData.append("intervieweeName", intervieweeName);
+      formData.append("interviewerName", interviewerName);
+      formData.append("description", description);
+      formData.append("interviewDate", interviewDate);
+      formData.append("themes", JSON.stringify(selectedThemes));
+  
+      // Append each video file
+      videoFiles.forEach((file) => {
+        formData.append("videoFiles", file);
+      });
+  
+      // Append each text file
+      textFiles.forEach((file) => {
+        formData.append("textFiles", file);
+      });
+  
+      // Send the form data to the server
+      await axios.post("http://localhost:5000/api/narratives", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+  
+      // Refresh the narratives list
+      fetchNarratives();
+  
+      // Close the modal
+      handleModalClose();
+    } catch (error) {
+      console.error("Failed to submit narrative:", error);
+    }
   };
 
   const resetForm = () => {
     setDescription("");
     setVideoFile(null);
+    setVideoFiles([]);
     setTextFile(null);
+    setTextFiles([]);
     setIntervieweeName("");
     setInterviewerName("");
     setSelectedThemes([]);
+    setInterviewDate("");
   };
 
   const handleModalClose = () => {
@@ -317,19 +358,17 @@ function NarrativePage() {
   };
 
   const handleThemeChange = (theme) => {
-    setSelectedThemes(prev => 
-      prev.includes(theme)
-        ? prev.filter(t => t !== theme)
-        : [...prev, theme]
+    setSelectedThemes((prev) =>
+      prev.includes(theme) ? prev.filter((t) => t !== theme) : [...prev, theme]
     );
   };
 
-  const filteredNarratives = narratives.filter(narrative => {
-    const searchMatch = 
-      narrative.intervieweeName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      narrative.interviewerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      narrative.interviewDate.toLowerCase().includes(searchTerm.toLowerCase());
-    
+  const filteredNarratives = narratives.filter((narrative) => {
+    const searchMatch =
+      narrative.intervieweeName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      narrative.interviewerName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      narrative.interviewDate?.toLowerCase().includes(searchTerm.toLowerCase());
+
     return searchMatch;
   });
 
@@ -397,7 +436,7 @@ function NarrativePage() {
               />
             </div>
             <div style={{ marginBottom: "20px" }}>
-              <h4>Interview Date</h4>
+              <h4 style={{ margin: "0 0 10px 0", color: "black" }}>Interview Date</h4>
               <input
                 type="date"
                 value={interviewDate}
@@ -420,10 +459,12 @@ function NarrativePage() {
             <div style={{ marginBottom: "20px" }}>
               <h4 style={{ margin: "0 0 10px 0", color: "black" }}>Upload Video</h4>
               <input
-                id="video"
+                id="videoFiles"
+                name="videoFiles"
                 type="file"
                 accept="video/*"
-                onChange={handleVideoChange} // Handle video file change
+                multiple
+                onChange={handleVideoChange}
                 required
                 style={{ width: "100%", padding: "8px", boxSizing: "border-box" }}
               />
@@ -457,21 +498,33 @@ function NarrativePage() {
         <h1 style={{ textAlign: "center", width: "100%" }}>Narratives Page</h1>
         <VideoContainer>
           {filteredNarratives.map((narrative, index) => (
-            <VideoContent 
-            key={index}
-            onClick={() => handleVideoClick(narrative)}
-            style={{ cursor: 'pointer' }}
-          >
-            <h3>{narrative.intervieweeName}</h3>
-            <p><strong>Interviewer:</strong> {narrative.interviewerName}</p>
-            <p><strong>Date:</strong> {narrative.interviewDate}</p> {/* Use interviewDate here */}
-            <p><strong>Description:</strong> {narrative.description}</p>
-            <p><strong>Video Files:</strong> {narrative.videoFiles.join(", ")}</p>
-            <p><strong>Text Files:</strong> {narrative.textFiles.join(", ")}</p>
-            {narrative.themes && narrative.themes.length > 0 && (
-              <p><strong>Themes:</strong> {narrative.themes.join(", ")}</p>
-            )}
-          </VideoContent>
+            <VideoContent
+              key={index}
+              onClick={() => handleVideoClick(narrative)}
+              style={{ cursor: "pointer" }}
+            >
+              <h3>{narrative.intervieweeName}</h3>
+              <p>
+                <strong>Interviewer:</strong> {narrative.interviewerName}
+              </p>
+              <p>
+                <strong>Date:</strong> {narrative.interviewDate}
+              </p>
+              <p>
+                <strong>Description:</strong> {narrative.description}
+              </p>
+              <p>
+                <strong>Video Files:</strong> {Array.isArray(narrative.videoFiles) ? narrative.videoFiles.join(", ") : narrative.videoFiles}
+              </p>
+              <p>
+                <strong>Text Files:</strong> {Array.isArray(narrative.textFiles) ? narrative.textFiles.join(", ") : narrative.textFiles}
+              </p>
+              {narrative.themes && narrative.themes.length > 0 && (
+                <p>
+                  <strong>Themes:</strong> {Array.isArray(narrative.themes) ? narrative.themes.join(", ") : narrative.themes}
+                </p>
+              )}
+            </VideoContent>
           ))}
         </VideoContainer>
       </Content>
@@ -479,4 +532,4 @@ function NarrativePage() {
   );
 }
 
-export default NarrativePage
+export default NarrativePage;
