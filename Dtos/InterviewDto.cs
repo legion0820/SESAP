@@ -16,5 +16,8 @@ namespace CapstoneController.Dtos{
 
         [Required]
         public string? interviewDesc {get; set;}
+
+        [Required]
+        public string? transcriptText {get; set;}
     }
 }

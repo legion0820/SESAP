@@ -17,13 +17,6 @@ namespace CapstoneController.Data{
         public async Task<IEnumerable<Interviews>> GetAllInterviews(){
             return await _context.Interviews.ToListAsync();
         }
-        public async Task CreateTranscript(Transcripts transcripts){
-            if(transcripts == null){
-                throw new ArgumentNullException(nameof(transcripts));
-            }
-
-            await _context.Transcripts.AddAsync(transcripts);
-        }
 
         public async Task CreateInterview(Interviews interviews){
             if (interviews == null){

@@ -6,7 +6,6 @@ namespace CapstoneController.Profiles{
     public class CapstoneProfile: Profile{
         public CapstoneProfile(){
             // Source -> Target
-            CreateMap<TranscriptDto, Transcripts>();
             CreateMap<InterviewDto, Interviews>();
             CreateMap<Interviews, InterviewDto>();
         }

@@ -5,7 +5,6 @@ namespace CapstoneController.Data{
         Task SaveChanges();
     
         Task<IEnumerable<Interviews>> GetAllInterviews();
-        Task CreateTranscript(Transcripts transcripts);
 
         Task CreateInterview(Interviews interviews);
 

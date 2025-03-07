@@ -33,14 +33,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapPost("api/v1/transcripts", async (ICapstoneRepo repo, IMapper mapper, TranscriptDto transcriptDto) => {
-    var transcriptmodel = mapper.Map<Transcripts>(transcriptDto);
-
-    await repo.CreateTranscript(transcriptmodel);
-    await repo.SaveChanges();
-
-    return Results.Created($"{transcriptDto}", transcriptDto);
-});
 
 /* Stores interview information from frontend to database */
 app.MapPost("api/v1/interviews", async (ICapstoneRepo repo, IMapper mapper, InterviewDto interviewDto) => {

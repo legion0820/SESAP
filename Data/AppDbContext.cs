@@ -9,7 +9,6 @@ namespace CapstoneController.Data{
 
         public DbSet<Interviews> Interviews => Set<Interviews>();
 
-        public DbSet<Transcripts> Transcripts => Set<Transcripts>();
 
         public DbSet<Videos> Videos => Set<Videos>();
 
