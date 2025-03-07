@@ -1,8 +1,7 @@
-// Narratives.jsx
 import React, { useState, useEffect } from "react";
 import styled from "@emotion/styled";
 import { useNavigate } from "react-router-dom";
-import axios from "axios"; // Import axios
+import axios from "axios";
 
 // Button Component
 const Button = ({ onClick, children, type }) => {
@@ -278,8 +277,8 @@ function NarrativePage() {
 
   const fetchNarratives = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/narratives"); // Use axios.get
-      setNarratives(response.data); // Access data via response.data
+      const response = await axios.get("http://localhost:5000/api/narratives");
+      setNarratives(response.data);
     } catch (error) {
       console.error("Error fetching narratives:", error);
     }
@@ -287,60 +286,70 @@ function NarrativePage() {
 
   // Handle video file selection
   const handleVideoChange = (e) => {
-    const file = e.target.files[0]; // Get the first file (for simplicity)
-    setVideoFile(file);
+    const files = Array.from(e.target.files);
+    setVideoFiles(files);
+    if (files.length > 0) {
+      setVideoFile(files[0]); // For preview
+    }
   };
 
   // Video preview URL (if a video file is selected)
   const videoPreviewUrl = videoFile ? URL.createObjectURL(videoFile) : null;
 
   const handleVideoClick = (narrative) => {
-    navigate("/interview-video", {
-      state: { narrative },
+    navigate(`/interview-video/${narrative.id}`, {
+      state: narrative
     });
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
   
-    const formData = new FormData();
-    formData.append("intervieweeName", intervieweeName);
-    formData.append("interviewerName", interviewerName);
-    formData.append("description", description);
-    formData.append("interviewDate", interviewDate);
-  
-    // Append each video file
-    videoFiles.forEach((file) => {
-      formData.append("videoFiles", file);
-    });
-  
-    // Append each text file
-    textFiles.forEach((file) => {
-      formData.append("textFiles", file);
-    });
-  
     try {
-      const response = await axios.post("http://localhost:5000/api/narratives", formData, {
+      const formData = new FormData();
+      formData.append("intervieweeName", intervieweeName);
+      formData.append("interviewerName", interviewerName);
+      formData.append("description", description);
+      formData.append("interviewDate", interviewDate);
+      formData.append("themes", JSON.stringify(selectedThemes));
+  
+      // Append each video file
+      videoFiles.forEach((file) => {
+        formData.append("videoFiles", file);
+      });
+  
+      // Append each text file
+      textFiles.forEach((file) => {
+        formData.append("textFiles", file);
+      });
+  
+      // Send the form data to the server
+      await axios.post("http://localhost:5000/api/narratives", formData, {
         headers: {
-          "Content-Type": "multipart/form-data", // Required for file uploads
+          "Content-Type": "multipart/form-data",
         },
       });
   
-      console.log("Success:", response.data);
-      fetchNarratives(); // Refresh the narratives list
-      handleModalClose(); // Close the modal
+      // Refresh the narratives list
+      fetchNarratives();
+  
+      // Close the modal
+      handleModalClose();
     } catch (error) {
       console.error("Failed to submit narrative:", error);
     }
   };
-  
+
   const resetForm = () => {
     setDescription("");
     setVideoFile(null);
+    setVideoFiles([]);
     setTextFile(null);
+    setTextFiles([]);
     setIntervieweeName("");
     setInterviewerName("");
     setSelectedThemes([]);
+    setInterviewDate("");
   };
 
   const handleModalClose = () => {
@@ -356,9 +365,9 @@ function NarrativePage() {
 
   const filteredNarratives = narratives.filter((narrative) => {
     const searchMatch =
-      narrative.intervieweeName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      narrative.interviewerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      narrative.interviewDate.toLowerCase().includes(searchTerm.toLowerCase());
+      narrative.intervieweeName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      narrative.interviewerName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      narrative.interviewDate?.toLowerCase().includes(searchTerm.toLowerCase());
 
     return searchMatch;
   });
@@ -427,7 +436,7 @@ function NarrativePage() {
               />
             </div>
             <div style={{ marginBottom: "20px" }}>
-              <h4>Interview Date</h4>
+              <h4 style={{ margin: "0 0 10px 0", color: "black" }}>Interview Date</h4>
               <input
                 type="date"
                 value={interviewDate}
@@ -455,7 +464,7 @@ function NarrativePage() {
                 type="file"
                 accept="video/*"
                 multiple
-                onChange={(e) => setVideoFiles(Array.from(e.target.files))}
+                onChange={handleVideoChange}
                 required
                 style={{ width: "100%", padding: "8px", boxSizing: "border-box" }}
               />
@@ -505,14 +514,14 @@ function NarrativePage() {
                 <strong>Description:</strong> {narrative.description}
               </p>
               <p>
-                <strong>Video Files:</strong> {narrative.videoFiles.join(", ")}
+                <strong>Video Files:</strong> {Array.isArray(narrative.videoFiles) ? narrative.videoFiles.join(", ") : narrative.videoFiles}
               </p>
               <p>
-                <strong>Text Files:</strong> {narrative.textFiles.join(", ")}
+                <strong>Text Files:</strong> {Array.isArray(narrative.textFiles) ? narrative.textFiles.join(", ") : narrative.textFiles}
               </p>
               {narrative.themes && narrative.themes.length > 0 && (
                 <p>
-                  <strong>Themes:</strong> {narrative.themes.join(", ")}
+                  <strong>Themes:</strong> {Array.isArray(narrative.themes) ? narrative.themes.join(", ") : narrative.themes}
                 </p>
               )}
             </VideoContent>

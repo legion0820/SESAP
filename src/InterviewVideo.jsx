@@ -1,6 +1,7 @@
-import React from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
+import axios from "axios"; // Import axios for API calls
 
 const Container = styled.div`
   display: flex;
@@ -90,38 +91,85 @@ const ErrorContainer = styled.div`
 `;
 
 function InterviewVideo() {
-  const location = useLocation();
+  const { id } = useParams(); // Get the ID from the URL
+  const location = useLocation(); // Access location state
   const navigate = useNavigate();
-  const { name, description, date, videoFile } = location.state || {};
+  const [narrative, setNarrative] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  if (!name) {
+  useEffect(() => {
+    const fetchNarrative = async () => {
+      try {
+        // Fetch the narrative data from the server
+        const response = await axios.get(`http://localhost:5000/api/narratives/${id}`);
+        setNarrative(response.data);
+      } catch (err) {
+        console.error("Error fetching narrative:", err);
+        setError("Failed to fetch narrative");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    // If no location state is available, fetch the data from the server
+    if (!location.state) {
+      fetchNarrative();
+    } else {
+      setNarrative(location.state);
+      setLoading(false);
+    }
+  }, [id, location.state]);
+
+  if (loading) {
+    return <Container>Loading...</Container>;
+  }
+
+  if (error) {
     return (
       <ErrorContainer>
-        <h2>No Interview Selected</h2>
+        <h2>Error: {error}</h2>
         <BackButton onClick={() => navigate(-1)}>Return to Narratives</BackButton>
       </ErrorContainer>
     );
   }
 
+  if (!narrative) {
+    return (
+      <ErrorContainer>
+        <h2>No Interview Found</h2>
+        <BackButton onClick={() => navigate(-1)}>Return to Narratives</BackButton>
+      </ErrorContainer>
+    );
+  }
+
+  // Ensure videoFiles is an array, even if it's undefined
+  const videoFiles = narrative.videoFiles || [];
+
   return (
     <Container>
       <BackButton onClick={() => navigate(-1)}>← Back to Narratives</BackButton>
-      <Title>{name}</Title>
+      <Title>{narrative.intervieweeName}</Title>
       <InfoSection>
         <InfoText>
-          <InfoLabel>Date:</InfoLabel> {date}
+          <InfoLabel>Interviewer:</InfoLabel> {narrative.interviewerName}
+        </InfoText>
+        <InfoText>
+          <InfoLabel>Date:</InfoLabel> {narrative.interviewDate}
         </InfoText>
         <InfoText>
           <InfoLabel>Description:</InfoLabel><br />
-          {description}
+          {narrative.description}
         </InfoText>
       </InfoSection>
-      <VideoWrapper>
-        <video controls>
-          <source src={videoFile} type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-      </VideoWrapper>
+      {videoFiles.map((videoFile, index) => (
+        <VideoWrapper key={index}>
+          <video controls>
+            <source src={`http://localhost:5000/uploads/${videoFile}`} type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        </VideoWrapper>
+      ))}
     </Container>
   );
 }
