@@ -259,15 +259,13 @@ function NarrativePage() {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [description, setDescription] = useState("");
-  const [videoFile, setVideoFile] = useState(null);
-  const [textFile, setTextFile] = useState(null);
+  const [embedLink, setEmbedLink] = useState("");
   const [narratives, setNarratives] = useState([]);
   const [intervieweeName, setIntervieweeName] = useState("");
   const [interviewerName, setInterviewerName] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedThemes, setSelectedThemes] = useState([]);
   const [interviewDate, setInterviewDate] = useState("");
-  const [videoFiles, setVideoFiles] = useState([]);
   const [textFiles, setTextFiles] = useState([]);
 
   // Fetch narratives on component mount
@@ -284,18 +282,6 @@ function NarrativePage() {
     }
   };
 
-  // Handle video file selection
-  const handleVideoChange = (e) => {
-    const files = Array.from(e.target.files);
-    setVideoFiles(files);
-    if (files.length > 0) {
-      setVideoFile(files[0]); // For preview
-    }
-  };
-
-  // Video preview URL (if a video file is selected)
-  const videoPreviewUrl = videoFile ? URL.createObjectURL(videoFile) : null;
-
   const handleVideoClick = (narrative) => {
     navigate(`/interview-video/${narrative.id}`, {
       state: narrative
@@ -304,47 +290,50 @@ function NarrativePage() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-  
+    
     try {
       const formData = new FormData();
       formData.append("intervieweeName", intervieweeName);
       formData.append("interviewerName", interviewerName);
       formData.append("description", description);
       formData.append("interviewDate", interviewDate);
-      formData.append("themes", JSON.stringify(selectedThemes));
+      
+      // Ensure embedLinks is always sent as an array
+      const videoLinks = embedLink ? [embedLink] : [];
+      formData.append("embedLinks", JSON.stringify(videoLinks));
   
-      // Append each video file
-      videoFiles.forEach((file) => {
-        formData.append("videoFiles", file);
+      console.log("Submitting data:", {
+        intervieweeName,
+        interviewerName,
+        description,
+        interviewDate,
+        embedLinks: videoLinks
       });
   
-      // Append each text file
-      textFiles.forEach((file) => {
-        formData.append("textFiles", file);
-      });
+      const response = await axios.post(
+        "http://localhost:5000/api/narratives", 
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+      );
   
-      // Send the form data to the server
-      await axios.post("http://localhost:5000/api/narratives", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-  
-      // Refresh the narratives list
+      console.log("Server response:", response.data);
       fetchNarratives();
-  
-      // Close the modal
       handleModalClose();
     } catch (error) {
-      console.error("Failed to submit narrative:", error);
+      console.error("Submission error:", {
+        error: error.response?.data || error.message,
+        request: error.config
+      });
     }
   };
 
   const resetForm = () => {
     setDescription("");
-    setVideoFile(null);
-    setVideoFiles([]);
-    setTextFile(null);
+    setEmbedLink("");
     setTextFiles([]);
     setIntervieweeName("");
     setInterviewerName("");
@@ -371,6 +360,25 @@ function NarrativePage() {
 
     return searchMatch;
   });
+
+  // Function to render embed preview if URL is valid
+  const renderEmbedPreview = () => {
+    if (!embedLink) return null;
+    
+    return (
+      <div style={{ marginTop: "10px" }}>
+        <h4 style={{ margin: "0 0 10px 0", color: "black" }}>Video Preview:</h4>
+        <iframe 
+          src={embedLink}
+          width="100%" 
+          height="200"
+          frameBorder="0"
+          allowFullScreen
+          title="Video Preview"
+        />
+      </div>
+    );
+  };
 
   return (
     <PageWrapper>
@@ -446,39 +454,28 @@ function NarrativePage() {
               />
             </div>
             <div style={{ marginBottom: "20px" }}>
-              <h4 style={{ margin: "0 0 10px 0", color: "black" }}>Upload Transcript File</h4>
+              <h4 style={{ margin: "0 0 10px 0", color: "black" }}>Video Embed Link</h4>
+              <input
+                id="embed-link"
+                type="text"
+                value={embedLink}
+                onChange={(e) => setEmbedLink(e.target.value)}
+                placeholder="Enter embed link (e.g., Kaltura link)"
+                required
+                style={{ width: "100%", padding: "8px", boxSizing: "border-box" }}
+              />
+              {renderEmbedPreview()}
+            </div>
+            {/* <div style={{ marginBottom: "20px" }}>
+              <h4 style={{ margin: "0 0 10px 0", color: "black" }}>Upload Transcript File (Optional)</h4>
               <input
                 id="text-file"
                 type="file"
                 multiple
                 onChange={(e) => setTextFiles(Array.from(e.target.files))}
-                required
                 style={{ width: "100%", padding: "8px", boxSizing: "border-box" }}
               />
-            </div>
-            <div style={{ marginBottom: "20px" }}>
-              <h4 style={{ margin: "0 0 10px 0", color: "black" }}>Upload Video</h4>
-              <input
-                id="videoFiles"
-                name="videoFiles"
-                type="file"
-                accept="video/*"
-                multiple
-                onChange={handleVideoChange}
-                required
-                style={{ width: "100%", padding: "8px", boxSizing: "border-box" }}
-              />
-              {/* Display video preview if a video file is selected */}
-              {videoPreviewUrl && (
-                <div style={{ marginTop: "20px" }}>
-                  <h4>Video Preview:</h4>
-                  <video controls width="100%">
-                    <source src={videoPreviewUrl} type="video/mp4" />
-                    Your browser does not support the video tag.
-                  </video>
-                </div>
-              )}
-            </div>
+            </div> */}
             <div style={{ marginBottom: "20px" }}>
               <h4 style={{ margin: "0 0 10px 0", color: "black" }}>Description</h4>
               <textarea
@@ -513,12 +510,23 @@ function NarrativePage() {
               <p>
                 <strong>Description:</strong> {narrative.description}
               </p>
-              <p>
-                <strong>Video Files:</strong> {Array.isArray(narrative.videoFiles) ? narrative.videoFiles.join(", ") : narrative.videoFiles}
-              </p>
-              <p>
-                <strong>Text Files:</strong> {Array.isArray(narrative.textFiles) ? narrative.textFiles.join(", ") : narrative.textFiles}
-              </p>
+              {narrative.embedLink && (
+                <div style={{ marginTop: "10px", marginBottom: "10px" }}>
+                  <iframe 
+                    src={narrative.embedLink}
+                    width="100%" 
+                    height="120"
+                    frameBorder="0"
+                    allowFullScreen
+                    title={`${narrative.intervieweeName} Video`}
+                  />
+                </div>
+              )}
+              {narrative.textFiles && narrative.textFiles.length > 0 && (
+                <p>
+                  <strong>Transcript Files:</strong> {Array.isArray(narrative.textFiles) ? narrative.textFiles.join(", ") : narrative.textFiles}
+                </p>
+              )}
               {narrative.themes && narrative.themes.length > 0 && (
                 <p>
                   <strong>Themes:</strong> {Array.isArray(narrative.themes) ? narrative.themes.join(", ") : narrative.themes}
