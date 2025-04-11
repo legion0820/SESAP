@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
-import axios from "axios"; // Import axios for API calls
+import axios from "axios";
 
 const Container = styled.div`
   display: flex;
@@ -26,10 +26,11 @@ const VideoWrapper = styled.div`
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 
-  video {
+  iframe {
     width: 100%;
+    height: 450px;
+    border: none;
     border-radius: 4px;
-    background-color: #000;
   }
 `;
 
@@ -91,18 +92,19 @@ const ErrorContainer = styled.div`
 `;
 
 function InterviewVideo() {
-  const { id } = useParams(); // Get the ID from the URL
-  const location = useLocation(); // Access location state
+  const { id } = useParams();
+  const location = useLocation();
   const navigate = useNavigate();
   const [narrative, setNarrative] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [videoSources, setVideoSources] = useState([]);
 
   useEffect(() => {
     const fetchNarrative = async () => {
       try {
-        // Fetch the narrative data from the server
         const response = await axios.get(`http://localhost:5000/api/narratives/${id}`);
+        console.log("API Response:", response.data);
         setNarrative(response.data);
       } catch (err) {
         console.error("Error fetching narrative:", err);
@@ -112,39 +114,89 @@ function InterviewVideo() {
       }
     };
 
-    // If no location state is available, fetch the data from the server
     if (!location.state) {
       fetchNarrative();
     } else {
+      console.log("Location state:", location.state);
       setNarrative(location.state);
       setLoading(false);
     }
   }, [id, location.state]);
 
-  if (loading) {
-    return <Container>Loading...</Container>;
-  }
+  useEffect(() => {
+    const processVideoSources = () => {
+      if (!narrative) return [];
+      
+      // Debug log to see complete narrative data
+      console.log("Full narrative data:", narrative);
+  
+      // 1. Check for embedLinks array (new format)
+      if (narrative.embedLinks?.length > 0) {
+        console.log("Found embedLinks:", narrative.embedLinks);
+        return narrative.embedLinks.map(convertToEmbedUrl);
+      }
+      
+      // 2. Check for single embedLink (legacy format)
+      if (narrative.embedLink) {
+        console.log("Found single embedLink:", narrative.embedLink);
+        return [convertToEmbedUrl(narrative.embedLink)];
+      }
+      
+      // 3. Check for videoFiles (oldest format)
+      if (narrative.videoFiles?.length > 0) {
+        console.log("Found videoFiles:", narrative.videoFiles);
+        return narrative.videoFiles.map(file => `/uploads/${file}`);
+      }
+      
+      console.warn("No video sources found in narrative");
+      return [];
+    };
+  
+    const convertToEmbedUrl = (url) => {
+      if (!url) return null;
+      
+      // YouTube URL conversions
+      if (url.includes('youtube.com/watch')) {
+        const videoId = new URL(url).searchParams.get('v');
+        return `https://www.youtube.com/embed/${videoId}`;
+      }
+      if (url.includes('youtu.be/')) {
+        const videoId = url.split('youtu.be/')[1].split('?')[0];
+        return `https://www.youtube.com/embed/${videoId}`;
+      }
+      if (url.includes('youtube.com/embed')) {
+        return url; // Already correct format
+      }
+      
+      // Return other URLs as-is (Vimeo, etc.)
+      return url;
+    };
+  
+    const sources = processVideoSources().filter(url => {
+      if (!url) {
+        console.warn("Filtered out invalid URL:", url);
+        return false;
+      }
+      return true;
+    });
+  
+    console.log("Final video sources:", sources);
+    setVideoSources(sources);
+  }, [narrative]);
 
-  if (error) {
-    return (
-      <ErrorContainer>
-        <h2>Error: {error}</h2>
-        <BackButton onClick={() => navigate(-1)}>Return to Narratives</BackButton>
-      </ErrorContainer>
-    );
-  }
-
-  if (!narrative) {
-    return (
-      <ErrorContainer>
-        <h2>No Interview Found</h2>
-        <BackButton onClick={() => navigate(-1)}>Return to Narratives</BackButton>
-      </ErrorContainer>
-    );
-  }
-
-  // Ensure videoFiles is an array, even if it's undefined
-  const videoFiles = narrative.videoFiles || [];
+  if (loading) return <Container>Loading...</Container>;
+  if (error) return (
+    <ErrorContainer>
+      <h2>Error: {error}</h2>
+      <BackButton onClick={() => navigate(-1)}>Return to Narratives</BackButton>
+    </ErrorContainer>
+  );
+  if (!narrative) return (
+    <ErrorContainer>
+      <h2>No Interview Found</h2>
+      <BackButton onClick={() => navigate(-1)}>Return to Narratives</BackButton>
+    </ErrorContainer>
+  );
 
   return (
     <Container>
@@ -162,14 +214,20 @@ function InterviewVideo() {
           {narrative.description}
         </InfoText>
       </InfoSection>
-      {videoFiles.map((videoFile, index) => (
-        <VideoWrapper key={index}>
-          <video controls>
-            <source src={`http://localhost:5000/uploads/${videoFile}`} type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-        </VideoWrapper>
-      ))}
+      {videoSources.length > 0 ? (
+        videoSources.map((src, index) => (
+          <VideoWrapper key={index}>
+            <iframe 
+              src={src}
+              title={`Video ${index + 1} - ${narrative.intervieweeName}`}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </VideoWrapper>
+        ))
+      ) : (
+        <InfoText>No videos available for this interview.</InfoText>
+      )}
     </Container>
   );
 }
