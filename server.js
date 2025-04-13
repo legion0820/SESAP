@@ -48,44 +48,38 @@ app.get("/api/narratives/:id", (req, res) => {
 });
 
 // Add a new narrative
-app.post("/api/narratives", upload.fields([
-  { name: "videoFiles", maxCount: 10 }, // Allow multiple video files
-  { name: "textFiles", maxCount: 10 },  // Allow multiple text files
-]), (req, res) => {
+app.post("/api/narratives", upload.fields([{ name: "textFiles", maxCount: 10 }]), (req, res) => {
   try {
-    console.log("Received files:", req.files);
-    console.log("Received body:", req.body);
-
-    // Log the uploaded files
-    if (req.files.videoFiles) {
-      console.log("Video files uploaded:", req.files.videoFiles);
+    // Parse embedLinks from request
+    let embedLinks = [];
+    if (req.body.embedLinks) {
+      try {
+        embedLinks = JSON.parse(req.body.embedLinks);
+      } catch (e) {
+        console.log("Using embedLinks as direct string");
+        embedLinks = req.body.embedLinks ? [req.body.embedLinks] : [];
+      }
     }
-    if (req.files.textFiles) {
-      console.log("Text files uploaded:", req.files.textFiles);
-    }
 
-    // Save the file names to the narrative
     const newNarrative = {
       id: narratives.length + 1,
       intervieweeName: req.body.intervieweeName,
       interviewerName: req.body.interviewerName,
       description: req.body.description,
       interviewDate: req.body.interviewDate,
-      videoFiles: req.files.videoFiles ? req.files.videoFiles.map((file) => file.filename) : [],
-      textFiles: req.files.textFiles ? req.files.textFiles.map((file) => file.filename) : [],
+      embedLinks: embedLinks, // This must be included
+      videoFiles: [],
+      textFiles: req.files?.textFiles?.map(file => file.filename) || []
     };
 
     narratives.push(newNarrative);
-
-    // Write the narratives array to a JSON file
-    const jsonFilePath = path.join(__dirname, "narratives.json");
-    fs.writeFileSync(jsonFilePath, JSON.stringify(narratives, null, 2));
-
-    console.log("New narrative added:", newNarrative);
+    fs.writeFileSync("narratives.json", JSON.stringify(narratives, null, 2));
+    
+    console.log("Saved narrative:", newNarrative);
     res.status(201).json(newNarrative);
   } catch (error) {
-    console.error("Error adding narrative:", error);
-    res.status(500).json({ error: "Failed to add narrative" });
+    console.error("Error saving narrative:", error);
+    res.status(500).json({ error: "Failed to save narrative" });
   }
 });
 
