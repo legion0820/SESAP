@@ -12,9 +12,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var sqlConBuilder = new SqlConnectionStringBuilder();
+var sqlConBuilder = new MySqlConnector.MySqlConnection();
 
-sqlConBuilder.ConnectionString = builder.Configuration.GetConnectionString("MariaDbConnection");
+sqlConBuilder.ConnectionString = builder.Configuration.GetConnectionString("AivenMySQL");
 //sqlConBuilder.UserID = builder.Configuration["UserId"];
 //sqlConBuilder.Password = builder.Configuration["Password"];
 

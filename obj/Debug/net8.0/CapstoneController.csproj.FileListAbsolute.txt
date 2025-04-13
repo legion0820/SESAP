@@ -356,3 +356,5 @@ C:\Users\nealj\source\repos\CAPSTONE_PROJECT\SESAP\obj\Debug\net8.0\CapstoneCont
 C:\Users\nealj\source\repos\CAPSTONE_PROJECT\SESAP\obj\Debug\net8.0\ref\CapstoneController.dll
 C:\Users\nealj\source\repos\CAPSTONE_PROJECT\SESAP\bin\Debug\net8.0\MySqlConnector.dll
 C:\Users\nealj\source\repos\CAPSTONE_PROJECT\SESAP\bin\Debug\net8.0\Pomelo.EntityFrameworkCore.MySql.dll
+C:\Users\nealj\source\repos\CAPSTONE_PROJECT\SESAP\bin\Debug\net8.0\narratives.json
+C:\Users\nealj\source\repos\CAPSTONE_PROJECT\SESAP\bin\Debug\net8.0\MySqlConnector.DependencyInjection.dll

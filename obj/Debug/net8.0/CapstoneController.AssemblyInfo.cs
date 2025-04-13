@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CapstoneController")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0993aff2151671cbd8f78c150601b5a7ace8061b")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6cb9bcd9a5aee25a233c33c18c0b24175da9e239")]
 [assembly: System.Reflection.AssemblyProductAttribute("CapstoneController")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CapstoneController")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
