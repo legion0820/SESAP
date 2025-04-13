@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import styled from '@emotion/styled';
 
@@ -18,23 +18,23 @@ const NavItem = styled.div`
 `;
 
 const Container = styled.div`
-    position: relative; /* For absolute positioning of login button */
-    text-align: center; /* Keep the heading centered */
-    padding: 5px 0; /* Add padding around the header */
+    position: relative;
+    text-align: center;
+    padding: 5px 0;
 `;
 
 const Heading = styled.h1`
-    padding: 20px 0; /* Add padding to the heading for better spacing */
-    color: #d73f09; /* Set text color to orange */
-    margin: 0 auto; /* Center the heading */
+    padding: 20px 0;
+    color: #d73f09;
+    margin: 0 auto;
 `;
 
 const LoginButton = styled.button`
-    position: absolute; /* Position the button absolutely */
-    right: 20px; /* Position from the right edge */
-    top: 50%; /* Center vertically */
-    transform: translateY(-50%); /* Adjust for perfect vertical centering */
-    background-color: #d73f09; /* Match the orange color scheme */
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #d73f09;
     color: white;
     border: none;
     padding: 8px 15px;
@@ -42,12 +42,12 @@ const LoginButton = styled.button`
     cursor: pointer;
     font-weight: bold;
     &:hover {
-        background-color: #b33000; /* Darker shade for hover state */
+        background-color: #b33000;
     }
 `;
 
 const Wrapper = styled.div`
-    background-color: rgb(24, 22, 22); /* Apply same background color to the entire div */
+    background-color: rgb(24, 22, 22);
 `;
 
 const Footer = styled.footer`
@@ -57,8 +57,8 @@ const Footer = styled.footer`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: calc(100% - 20px); /* Adjust width to prevent overlap with scrollbar */
-    padding: 5px 20px; /* Reduce padding to make the footer smaller */
+    width: calc(100% - 20px);
+    padding: 5px 20px;
     background-color: rgb(24, 22, 22);
 `;
 
@@ -76,91 +76,109 @@ const FooterLink = styled.a`
 `;
 
 const MainContent = styled.div`
-    margin-bottom: 100px; /* Increase margin to ensure sufficient space above footer */
+    margin-bottom: 100px;
 `;
 
 function Root() {
     const navigate = useNavigate();
-    
-    // Initialize Google OAuth client
+    const [isGoogleReady, setIsGoogleReady] = useState(false);
+
     useEffect(() => {
-        // Load the Google API client library
         const loadGoogleScript = () => {
+            if (document.querySelector('script[src="https://accounts.google.com/gsi/client"]')) {
+                if (window.google && window.google.accounts) {
+                    initializeGoogleSignIn();
+                }
+                return;
+            }
+
             const script = document.createElement('script');
             script.src = 'https://accounts.google.com/gsi/client';
             script.async = true;
             script.defer = true;
             document.body.appendChild(script);
-            
+
             script.onload = initializeGoogleSignIn;
+            script.onerror = () => {
+                console.error("Failed to load Google Sign-In script");
+            };
         };
-        
-        // Initialize Google Sign-In
+
         const initializeGoogleSignIn = () => {
-            // Replace with your actual Google Client ID
-            window.google.accounts.id.initialize({
-                client_id: 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com',
-                callback: handleGoogleSignIn,
-                auto_select: false,
-                cancel_on_tap_outside: true,
-            });
-        };
-        
-        loadGoogleScript();
-        
-        // Cleanup
-        return () => {
-            const scriptTag = document.querySelector('script[src="https://accounts.google.com/gsi/client"]');
-            if (scriptTag) {
-                scriptTag.remove();
+            if (!window.google || !window.google.accounts) {
+                console.error("Google API not loaded correctly");
+                return;
+            }
+
+            try {
+                window.google.accounts.id.initialize({
+                    client_id: '493685022379-tiuah4qh7n2v2hqocvhec2k2p64ct9vp.apps.googleusercontent.com',
+                    callback: handleGoogleSignIn,
+                    auto_select: false,
+                    cancel_on_tap_outside: true,
+                    context: 'signin',
+                    use_fedcm_for_prompt: true,
+                    error_callback: (error) => {
+                        console.error("Google Sign-In error:", error);
+                    }
+                });
+
+                setIsGoogleReady(true);
+                console.log("Google Sign-In initialized successfully");
+            } catch (error) {
+                console.error("Error initializing Google Sign-In:", error);
             }
         };
+
+        loadGoogleScript();
     }, []);
-    
-    // Handle Google Sign-In
+
+    useEffect(() => {
+        if (window.google && window.google.accounts && isGoogleReady && !isLoggedIn) {
+            window.google.accounts.id.renderButton(
+                document.getElementById('google-signin-button'),
+                { theme: 'outline', size: 'large', text: 'signin_with' }
+            );
+        }
+    }, [isGoogleReady]);
+
     const handleGoogleSignIn = (response) => {
-        // Get the ID token from the response
         const idToken = response.credential;
-        
-        // Here you would typically:
-        // 1. Send this token to your backend
-        // 2. Verify the token on your server
-        // 3. Create a session for the user
-        
         console.log("Google Sign-In successful", response);
-        
-        // Store user info in localStorage or state management solution
         localStorage.setItem('userToken', idToken);
-        
-        // Redirect to a dashboard or refresh the current page
-        // navigate('/dashboard');
         window.location.reload();
     };
-    
-    // Handle login button click
+
     const handleLoginClick = () => {
-        // If user is already logged in, handle logout
         if (localStorage.getItem('userToken')) {
             localStorage.removeItem('userToken');
             window.location.reload();
             return;
         }
-        
-        // Otherwise, prompt Google Sign-In
-        window.google.accounts.id.prompt();
+
+        if (window.google && window.google.accounts) {
+            window.google.accounts.id.prompt((notification) => {
+                if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+                    console.log('Google Sign-In notification not displayed:', notification.getNotDisplayedReason());
+                }
+            });
+        } else {
+            console.error('Google API not loaded yet.');
+        }
     };
-    
-    // Check if user is logged in
+
     const isLoggedIn = localStorage.getItem('userToken') !== null;
-    
+
     return (
         <>
             <Wrapper>
                 <Container>
                     <Heading>The EECS Student Experience Story Archive Project</Heading>
-                    <LoginButton onClick={handleLoginClick}>
-                        {isLoggedIn ? 'Logout' : 'Login'}
-                    </LoginButton>
+                    {!isLoggedIn ? (
+                        <div id="google-signin-button" style={{ position: 'absolute', right: '20px', top: '50%', transform: 'translateY(-50%)' }}></div>
+                    ) : (
+                        <LoginButton onClick={handleLoginClick}>Logout</LoginButton>
+                    )}
                 </Container>
                 <Nav>
                     <NavItem><NavLink to="/" className="nav-link">Visualization</NavLink></NavItem>
@@ -171,7 +189,7 @@ function Root() {
             </Wrapper>
             <MainContent>
                 <Outlet />
-            </MainContent>    
+            </MainContent>
             <Footer>
                 <FootTitle>The Archive Project</FootTitle>
                 <div>
