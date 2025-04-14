@@ -64,6 +64,14 @@ app.MapGet("api/v1/interviews", async (ICapstoneRepo repo, IMapper mapper) => {
     return Results.Ok(mapper.Map<IEnumerable<InterviewDto>>(interviews));
 });
 
+app.MapGet("api/v1/interviews/{id}", async (ICapstoneRepo repo, IMapper mapper, int id) => {
+    var interview = await repo.GetInterviewById(id);
+    if (interview != null){
+        return Results.Ok(mapper.Map<InterviewDto>(interview));
+    }
+    return Results.NotFound();
+});
+
 app.Run();
 
 
