@@ -292,42 +292,45 @@ function NarrativePage() {
     event.preventDefault();
     
     try {
-      const formData = new FormData();
-      formData.append("intervieweeName", intervieweeName);
-      formData.append("interviewerName", interviewerName);
-      formData.append("description", description);
-      formData.append("interviewDate", interviewDate);
+      let transcriptText = "";
       
-      // Ensure embedLinks is always sent as an array
-      const videoLinks = embedLink ? [embedLink] : [];
-      formData.append("embedLinks", JSON.stringify(videoLinks));
-  
-      console.log("Submitting data:", {
+      if (textFiles.length > 0) {
+        const file = textFiles[0];
+        // Check file size before reading
+        if (file.size > 10 * 1024 * 1024) { // 10MB
+          console.warn("Transcript file is very large, truncating or summarizing might be necessary");
+         
+        }
+        transcriptText = await file.text();
+      }
+      
+      // If transcript is extremely large, consider truncating
+      if (transcriptText.length > 1000000) { // ~1MB of text
+        console.warn(`Transcript is very large (${transcriptText.length} chars), truncating`);
+        transcriptText = transcriptText.substring(0, 1000000) + "... [truncated due to size]";
+      }
+      
+      const interviewPayload = {
         intervieweeName,
         interviewerName,
-        description,
         interviewDate,
-        embedLinks: videoLinks
-      });
+        interviewEmbedLink: embedLink,
+        interviewTranscript: transcriptText,
+        interviewDesc: description,
+      };
+  
+      console.log("Payload size:", JSON.stringify(interviewPayload).length / 1024, "KB");
   
       const response = await axios.post(
-        "http://localhost:5000/api/narratives", 
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        }
+        "http://localhost:5000/proxy/api/interviews", 
+        interviewPayload
       );
-  
-      console.log("Server response:", response.data);
+      
+      console.log("Interview data sent successfully:", response.data);
       fetchNarratives();
       handleModalClose();
     } catch (error) {
-      console.error("Submission error:", {
-        error: error.response?.data || error.message,
-        request: error.config
-      });
+      console.error("Submission error:", error.response?.data || error.message);
     }
   };
 
@@ -414,7 +417,6 @@ function NarrativePage() {
         </Theme>
         <Button onClick={() => setIsModalOpen(true)}>Add New Narrative</Button>
       </Filter>
-
       <Dialog open={isModalOpen} onOpenChange={handleModalClose}>
         <DialogContent>
           <DialogHeader>
@@ -466,8 +468,8 @@ function NarrativePage() {
               />
               {renderEmbedPreview()}
             </div>
-            {/* <div style={{ marginBottom: "20px" }}>
-              <h4 style={{ margin: "0 0 10px 0", color: "black" }}>Upload Transcript File (Optional)</h4>
+            <div style={{ marginBottom: "20px" }}>
+              <h4 style={{ margin: "0 0 10px 0", color: "black" }}>Upload Transcript File</h4>
               <input
                 id="text-file"
                 type="file"
@@ -475,7 +477,7 @@ function NarrativePage() {
                 onChange={(e) => setTextFiles(Array.from(e.target.files))}
                 style={{ width: "100%", padding: "8px", boxSizing: "border-box" }}
               />
-            </div> */}
+            </div>
             <div style={{ marginBottom: "20px" }}>
               <h4 style={{ margin: "0 0 10px 0", color: "black" }}>Description</h4>
               <textarea
@@ -508,12 +510,12 @@ function NarrativePage() {
                 <strong>Date:</strong> {narrative.interviewDate}
               </p>
               <p>
-                <strong>Description:</strong> {narrative.description}
+                <strong>Description:</strong> {narrative.interviewDesc}
               </p>
-              {narrative.embedLink && (
+              {narrative.interviewEmbedLink && (
                 <div style={{ marginTop: "10px", marginBottom: "10px" }}>
                   <iframe 
-                    src={narrative.embedLink}
+                    src={narrative.interviewEmbedLink}
                     width="100%" 
                     height="120"
                     frameBorder="0"
