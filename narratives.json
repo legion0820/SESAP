@@ -34,5 +34,17 @@
     ],
     "videoFiles": [],
     "textFiles": []
+  },
+  {
+    "id": 4,
+    "intervieweeName": "asdasdasd",
+    "interviewerName": "asdasdasdas",
+    "description": "asdasdasd",
+    "interviewDate": "0001-11-01",
+    "embedLinks": [],
+    "videoFiles": [],
+    "textFiles": [
+      "1744580860366-hw6.pdf"
+    ]
   }
 ]

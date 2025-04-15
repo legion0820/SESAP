@@ -105,6 +105,12 @@ function InterviewVideo() {
       try {
         const response = await axios.get(`http://localhost:5000/api/narratives/${id}`);
         console.log("API Response:", response.data);
+        
+        // Check if the response has the expected structure
+        if (response.data && !response.data.interviewEmbedLink && !response.data.embedLink) {
+          console.warn("Warning: No video link found in the API response");
+        }
+        
         setNarrative(response.data);
       } catch (err) {
         console.error("Error fetching narrative:", err);
@@ -113,7 +119,7 @@ function InterviewVideo() {
         setLoading(false);
       }
     };
-
+  
     if (!location.state) {
       fetchNarrative();
     } else {
@@ -129,7 +135,14 @@ function InterviewVideo() {
       
       // Debug log to see complete narrative data
       console.log("Full narrative data:", narrative);
-  
+    
+      // Check for interviewEmbedLink (the one used by your API)
+      if (narrative.interviewEmbedLink) {
+        console.log("Found interviewEmbedLink:", narrative.interviewEmbedLink);
+        return [convertToEmbedUrl(narrative.interviewEmbedLink)];
+      }
+    
+      // The existing checks for backward compatibility
       // 1. Check for embedLinks array (new format)
       if (narrative.embedLinks?.length > 0) {
         console.log("Found embedLinks:", narrative.embedLinks);
@@ -211,7 +224,7 @@ function InterviewVideo() {
         </InfoText>
         <InfoText>
           <InfoLabel>Description:</InfoLabel><br />
-          {narrative.description}
+          {narrative.interviewDesc || narrative.description}
         </InfoText>
       </InfoSection>
       {videoSources.length > 0 ? (

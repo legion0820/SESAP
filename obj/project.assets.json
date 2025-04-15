@@ -4644,26 +4644,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\nealj\\.nuget\\packages\\": {}
+    "C:\\Users\\leono\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\nealj\\source\\repos\\CAPSTONE_PROJECT\\SESAP\\CapstoneController.csproj",
+      "projectUniqueName": "C:\\Users\\leono\\Coding\\SESAP\\CapstoneController.csproj",
       "projectName": "CapstoneController",
-      "projectPath": "C:\\Users\\nealj\\source\\repos\\CAPSTONE_PROJECT\\SESAP\\CapstoneController.csproj",
-      "packagesPath": "C:\\Users\\nealj\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\nealj\\source\\repos\\CAPSTONE_PROJECT\\SESAP\\obj\\",
+      "projectPath": "C:\\Users\\leono\\Coding\\SESAP\\CapstoneController.csproj",
+      "packagesPath": "C:\\Users\\leono\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\leono\\Coding\\SESAP\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\nealj\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "C:\\Users\\leono\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -4676,6 +4674,11 @@
         "warnAsError": [
           "NU1605"
         ]
+      },
+      "restoreAuditProperties": {
+        "enableAudit": "true",
+        "auditLevel": "low",
+        "auditMode": "direct"
       }
     },
     "frameworks": {
@@ -4740,7 +4743,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.100/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.408/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
