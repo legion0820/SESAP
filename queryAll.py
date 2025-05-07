@@ -15,6 +15,8 @@ def main():
         "rodriguez_estrada_fernando_20230622[16].docx",
         "yeasmin_sanjida_20230706[99].docx",
         "corona_javier_20230601[31].docx",
+        "cartagena_jazmin_20230605[32].docx",
+        "berliner_garrett_20230404[60].docx"
     ]
     queryAll(transcriptFileNames)
 
@@ -29,18 +31,23 @@ def saveResults(filename, results):
 
 
 def formatJSON(responseLLM):
-    topics = {}
-    
-    #using regex to find numbers and separate text
-    matches = re.findall(r"(\d+)\.\s([^:]+):\s(.+)", responseLLM)
-
-    for num, topic, description in matches:
-        topics[int(num)] = {
-            "topic": topic.strip(),
-            "description": description.strip()
-        }
-
-    return topics
+    stack = []
+    start = None
+    for i, char in enumerate(responseLLM):
+        if char == '{':
+            if not stack:
+                start = i
+            stack.append(char)
+        elif char == '}':
+            if stack:
+                stack.pop()
+                if not stack and start is not None:
+                    json_candidate = responseLLM[start:i+1]
+                    try:
+                        return json.loads(json_candidate)
+                    except json.JSONDecodeError:
+                        print(f"Error decoding JSON")
+                        return None
 
 def queryAll(transcriptFileNames):
     for filename in transcriptFileNames:
