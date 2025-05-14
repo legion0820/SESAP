@@ -4644,19 +4644,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\leono\\.nuget\\packages\\": {}
+    "C:\\Users\\valle\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\leono\\Coding\\SESAP\\CapstoneController.csproj",
+      "projectUniqueName": "C:\\OSU_School\\SESAP_Project\\Frontend\\SESAP\\CapstoneController.csproj",
       "projectName": "CapstoneController",
-      "projectPath": "C:\\Users\\leono\\Coding\\SESAP\\CapstoneController.csproj",
-      "packagesPath": "C:\\Users\\leono\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\leono\\Coding\\SESAP\\obj\\",
+      "projectPath": "C:\\OSU_School\\SESAP_Project\\Frontend\\SESAP\\CapstoneController.csproj",
+      "packagesPath": "C:\\Users\\valle\\.nuget\\packages\\",
+      "outputPath": "C:\\OSU_School\\SESAP_Project\\Frontend\\SESAP\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\leono\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\valle\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
@@ -4674,11 +4674,6 @@
         "warnAsError": [
           "NU1605"
         ]
-      },
-      "restoreAuditProperties": {
-        "enableAudit": "true",
-        "auditLevel": "low",
-        "auditMode": "direct"
       }
     },
     "frameworks": {
@@ -4743,7 +4738,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.408/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.101/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
