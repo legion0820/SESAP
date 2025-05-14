@@ -36,12 +36,12 @@ themes = [
     "Career Preparation",
     "Language Barriers",
     "Support Networks",
-    "Personal Growth"
+    "Personal Growth",
 ]
 
 students = []
-wordCount = np.zeros((len(themes), len(identities)), dtype=int)
-resultsDir = "C:/Users/Daniel/SESAP/results"
+countMatch = np.zeros((len(themes), len(identities)), dtype=int)
+resultsDir = "C:/Users/Daniel/SESAP/results" #replace
 
 for filename in os.listdir(resultsDir):
     if filename.endswith(".json"):
@@ -60,13 +60,20 @@ for filename in os.listdir(resultsDir):
                     for identity in identityList:
                         if identity in identities:
                             identityIdx = identities.index(identity)
-                            wordCount[themeIdx][identityIdx] += 1
-
-savemat("barGraphData.mat", {
-    "wordCount": wordCount,
+                            countMatch[themeIdx][identityIdx] += 1
+                            print(f"{studentName}: [{theme}] -> [{identity}] at index {identityIdx} ({countMatch})")
+            
+savemat("graphData.mat", {
+    "countMatch": countMatch,
     "themes": themes,
     "identities": identities,
-    "interviewees": students
+    "students": students
 })
 
+print("Shape:", countMatch.shape)
+print("Identities:", len(identities))
+print("Themes:", len(themes))
+print("Matrix:\n", countMatch)
+
 subprocess.run(f'matlab -batch "barGraph"', shell=True)
+subprocess.run('matlab -batch "wordCloud"', shell=True)

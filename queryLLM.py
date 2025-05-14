@@ -17,9 +17,78 @@ Analyze the following student interview transcript and extract key themes and to
 
 ---
 
-List the main, distinctive topics discussed in this transcript from most significant to least. 
-Do not include "Background" as a topic name. Instead, label the topic to represent specifically for the student.
-Separate the topic name and description with a colon.
+Identify all relevant themes or topics that the student discusses. Only use the themes from the following list:
+
+    Academic Difficulty
+
+    Faculty Support
+
+    Peer Relationships
+
+    Belonging
+
+    Cultural Representation
+
+    Financial Struggles
+
+    Mental Health
+
+    Family Pressure
+
+    Work-Life Balance
+
+    Identity & Discrimination
+
+    Career Preparation
+
+    Language Barriers
+
+    Support Networks
+
+    Personal Growth
+
+Also list the identities that the student identifies with based on the transcript. Only use the identities from the following list:
+
+First-Generation Student
+
+LGBTQ+
+
+Immigrant
+
+Veteran
+
+Parent
+
+Low-Income
+
+Student of Color
+
+Transfer Student
+
+Non-Traditional Age
+
+Religious
+
+Disabled
+
+International Student
+
+Rural
+
+Working Student
+
+STEM Minoritized
+
+Then return the following structured JSON:
+
+{{
+  "name": "Student Full Name",
+  "themes": "Most significant theme", "Possible Second theme",
+  "identities": "Most significant identity", "Possible Second identity",
+  "description": "Single sentence analysis of the student experience."
+}}
+
+Only return the JSON response with extracted data. Do not include any additional explanation or commentary.
 """
 
 

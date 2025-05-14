@@ -9,7 +9,7 @@ RESULTS_FILE = os.path.join(RESULTS_PATH, " .json")
 
 def main():
     load_dotenv()
-    transcriptFileNames = [
+    transcriptFileNames = [ #replace 
         "alvarez_bryan_20230406[3]",
         "yirenya_tawiah_daniel_20230523[1].docx",
         "rodriguez_estrada_fernando_20230622[16].docx",
