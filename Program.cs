@@ -6,6 +6,10 @@ using AutoMapper;
 using CapstoneController.Dtos;
 using CapstoneController.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
+using System.Text.Json;
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,7 +41,74 @@ app.UseHttpsRedirection();
 /* Stores interview information from frontend to database */
 app.MapPost("api/v1/interviews", async (ICapstoneRepo repo, IMapper mapper, InterviewDto interviewDto) => {
     var interviewmodel = mapper.Map<Interviews>(interviewDto);
+    ///
 
+    string baseDirectory = AppContext.BaseDirectory;  
+
+    string populateDatabase = Path.Combine(baseDirectory, "populateDatabase.py")
+
+    var startDbInfo = new ProcessStartInfo
+    {
+        FileName = "python",  
+        Arguments = $"\"{populateDatabase}\"",  
+        RedirectStandardOutput = true,
+        UseShellExecute = false,
+        CreateNoWindow = true
+    };
+
+    string results = string.Empty;
+    using (var process = Process.Start(startInfo))
+    {
+        using (var reader = process.StandardOutput)
+        {
+            results = reader.ReadToEnd();
+        }
+    }
+
+
+    string pythonScriptPath = Path.Combine(baseDirectory, "queryAll.py");
+
+    string transcriptFilePath = interviewDto.interviewTranscript;  
+
+    var startInfo = new ProcessStartInfo
+    {
+        FileName = "python",  
+        Arguments = $"\"{pythonScriptPath}\" \"{transcriptFilePath}\"",  
+        RedirectStandardOutput = true,
+        UseShellExecute = false,
+        CreateNoWindow = true
+    };
+
+    string results = string.Empty;
+    using (var process = Process.Start(startInfo))
+    {
+        using (var reader = process.StandardOutput)
+        {
+            results = reader.ReadToEnd();
+        }
+    }
+
+
+    chartGeneratorFilePath = Path.Combine(baseDirectory, "generateCharts.py")
+    var startChartGeneratorInfo = new ProcessStartInfo
+    {
+        FileName = "python",
+        Arguments = $"\"{chartGeneratorFilePath}"
+        RedirectStandardOutput = true
+        UseShellExecute = false
+        CreateNoWindow = true
+    }
+
+    using (var process = Process.Start(starChartGenerationInfo))
+    {
+        using (var reader = process.StandardOutput)
+        {
+            results = reader.ReadToEnd();
+        }
+    }
+      
+
+    ///
     await repo.CreateInterview(interviewmodel);
     await repo.SaveChanges();
 
