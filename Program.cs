@@ -42,71 +42,182 @@ app.UseHttpsRedirection();
 app.MapPost("api/v1/interviews", async (ICapstoneRepo repo, IMapper mapper, InterviewDto interviewDto) => {
     var interviewmodel = mapper.Map<Interviews>(interviewDto);
     ///
+;
+    string baseDirectory = Directory.GetCurrentDirectory();
 
-    string baseDirectory = AppContext.BaseDirectory;  
-
-    string populateDatabase = Path.Combine(baseDirectory, "populateDatabase.py")
+    string populateDatabase = Path.Combine(baseDirectory, "populateDatabase.py");
 
     var startDbInfo = new ProcessStartInfo
     {
-        FileName = "python",  
-        Arguments = $"\"{populateDatabase}\"",  
-        RedirectStandardOutput = true,
-        UseShellExecute = false,
-        CreateNoWindow = true
+        FileName = "python", // Ensure the 'python' path is correct if not in PATH
+        Arguments = $"\"{populateDatabase}\"", // Path to the script
+        RedirectStandardOutput = true,  // Capture stdout
+        RedirectStandardError = true,   // Capture stderr
+        UseShellExecute = false, // Don't use the shell to start the process
+        CreateNoWindow = true,   // Prevent the process from showing a window
+        WorkingDirectory = baseDirectory // Ensure the working directory is set correctly
     };
 
-    string results = string.Empty;
-    using (var process = Process.Start(startInfo))
+    Console.WriteLine("[DEBUG] Starting the Python script");
+
+    using (var process = new Process { StartInfo = startDbInfo })
     {
-        using (var reader = process.StandardOutput)
+        try
         {
-            results = reader.ReadToEnd();
+            Console.WriteLine("[DEBUG] Process started, waiting for completion...");
+
+            process.Start();
+
+            // Capture standard output and errors
+            Task<string> stdOutTask = process.StandardOutput.ReadToEndAsync();
+            Task<string> stdErrTask = process.StandardError.ReadToEndAsync();
+
+            // Wait for process exit (30 seconds timeout)
+            if (!process.WaitForExit(60000)) // 30 seconds timeout
+            {
+                process.Kill();
+                Console.WriteLine("[ERROR] Script timed out.");
+                return Results.Problem("populateDatabase.py timed out after 30 seconds.");
+            }
+
+            string stdout = await stdOutTask;
+            string stderr = await stdErrTask;
+
+            Console.WriteLine("[DEBUG] Script completed successfully.");
+            Console.WriteLine($"[DEBUG] Stdout: {stdout}");
+            Console.WriteLine($"[DEBUG] Stderr: {stderr}");
+
+            if (process.ExitCode != 0)
+            {
+                return Results.Problem($"populateDatabase.py failed with exit code {process.ExitCode}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[ERROR] Exception occurred: {ex.Message}");
+            return Results.Problem($"Exception occurred: {ex.Message}");
         }
     }
 
+    Console.WriteLine("[DEBUG] startDB process finished");
+
+    ////////
 
     string pythonScriptPath = Path.Combine(baseDirectory, "queryAll.py");
 
     string transcriptFilePath = interviewDto.interviewTranscript;  
 
-    var startInfo = new ProcessStartInfo
+    var startQueryInfo = new ProcessStartInfo
     {
         FileName = "python",  
-        Arguments = $"\"{pythonScriptPath}\" \"{transcriptFilePath}\"",  
-        RedirectStandardOutput = true,
-        UseShellExecute = false,
-        CreateNoWindow = true
+        Arguments = $"\"{pythonScriptPath}\"",  // \"{transcriptFilePath}\"
+        RedirectStandardOutput = true,  // Capture stdout
+        RedirectStandardError = true,   // Capture stderr
+        UseShellExecute = false, // Don't use the shell to start the process
+        CreateNoWindow = true,   // Prevent the process from showing a window
+        WorkingDirectory = baseDirectory // Ensure the working directory is set correctly
     };
 
-    string results = string.Empty;
-    using (var process = Process.Start(startInfo))
+    Console.WriteLine("[DEBUG] Starting the Python QueryAll script");
+
+    using (var process = new Process { StartInfo = startQueryInfo })
     {
-        using (var reader = process.StandardOutput)
+        try
         {
-            results = reader.ReadToEnd();
+            Console.WriteLine("[DEBUG] Process started, waiting for completion...");
+
+            process.Start();
+
+            // Capture standard output and errors
+            Task<string> stdOutTask = process.StandardOutput.ReadToEndAsync();
+            Task<string> stdErrTask = process.StandardError.ReadToEndAsync();
+
+            // Wait for process exit (30 seconds timeout)
+            if (!process.WaitForExit(60000)) // 30 seconds timeout
+            {
+                process.Kill();
+                Console.WriteLine("[ERROR] Query All Script timed out.");
+                return Results.Problem("queryAll.py timed out after 30 seconds.");
+            }
+
+            string stdout = await stdOutTask;
+            string stderr = await stdErrTask;
+
+            Console.WriteLine("[DEBUG] queryAll Script completed successfully.");
+            Console.WriteLine($"[DEBUG] Stdout: {stdout}");
+            Console.WriteLine($"[DEBUG] Stderr: {stderr}");
+
+            if (process.ExitCode != 0)
+            {
+                return Results.Problem($"queryAll.py failed with exit code {process.ExitCode}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[ERROR] Exception occurred: {ex.Message}");
+            return Results.Problem($"Exception occurred: {ex.Message}");
         }
     }
 
+    Console.WriteLine("[DEBUG] queryAll process finished");
 
-    chartGeneratorFilePath = Path.Combine(baseDirectory, "generateCharts.py")
+    //////
+
+    string chartGeneratorFilePath = Path.Combine(baseDirectory, "generateCharts.py");
     var startChartGeneratorInfo = new ProcessStartInfo
     {
         FileName = "python",
-        Arguments = $"\"{chartGeneratorFilePath}"
-        RedirectStandardOutput = true
-        UseShellExecute = false
-        CreateNoWindow = true
-    }
+        Arguments = $"\"{chartGeneratorFilePath}\"",
+        RedirectStandardOutput = true,  // Capture stdout
+        RedirectStandardError = true,   // Capture stderr
+        UseShellExecute = false, // Don't use the shell to start the process
+        CreateNoWindow = true,   // Prevent the process from showing a window
+        WorkingDirectory = baseDirectory // Ensure the working directory is set correctly
+    };
 
-    using (var process = Process.Start(starChartGenerationInfo))
+    Console.WriteLine("[DEBUG] Starting the Python chartGenerator script");
+
+    using (var process = new Process { StartInfo = startChartGeneratorInfo })
     {
-        using (var reader = process.StandardOutput)
+        try
         {
-            results = reader.ReadToEnd();
+            Console.WriteLine("[DEBUG] Process started, waiting for completion...");
+
+            process.Start();
+
+            // Capture standard output and errors
+            Task<string> stdOutTask = process.StandardOutput.ReadToEndAsync();
+            Task<string> stdErrTask = process.StandardError.ReadToEndAsync();
+
+            // Wait for process exit (30 seconds timeout)
+            if (!process.WaitForExit(60000)) // 30 seconds timeout
+            {
+                process.Kill();
+                Console.WriteLine("[ERROR] Chart generator Script timed out.");
+                return Results.Problem("generateCharts.py timed out after 30 seconds.");
+            }
+
+            string stdout = await stdOutTask;
+            string stderr = await stdErrTask;
+
+            Console.WriteLine("[DEBUG] generateCharts Script completed successfully.");
+            Console.WriteLine($"[DEBUG] Stdout: {stdout}");
+            Console.WriteLine($"[DEBUG] Stderr: {stderr}");
+
+            if (process.ExitCode != 0)
+            {
+                return Results.Problem($"generateCharts.py failed with exit code {process.ExitCode}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[ERROR] Exception occurred: {ex.Message}");
+            return Results.Problem($"Exception occurred: {ex.Message}");
         }
     }
-      
+
+    Console.WriteLine("[DEBUG] generateCharts process finished");
+    
 
     ///
     await repo.CreateInterview(interviewmodel);

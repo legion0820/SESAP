@@ -9,14 +9,9 @@ RESULTS_FILE = os.path.join(RESULTS_PATH, " .json")
 
 def main():
     load_dotenv()
-    transcriptFileNames = [ #replace 
-        "alvarez_bryan_20230406[3]",
-        "yirenya_tawiah_daniel_20230523[1].docx",
-        "rodriguez_estrada_fernando_20230622[16].docx",
-        "yeasmin_sanjida_20230706[99].docx",
-        "corona_javier_20230601[31].docx",
-        "cartagena_jazmin_20230605[32].docx",
-        "berliner_garrett_20230404[60].docx"
+    transcriptFileNames = [ 
+        f for f in os.listdir("./transcripts/") 
+        if f.endswith(".docx")
     ]
     queryAll(transcriptFileNames)
 

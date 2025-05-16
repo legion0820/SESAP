@@ -40,7 +40,7 @@ export default function VisualizationPage() {
     <ContentVisulization>
       <ContainerVisulization>
         <Header>Thematic Trends</Header>
-        <Image src="/AdversityIdentity.png" alt="Thematic Trends Word Cloud" />
+        <Image src="/barchart.png" alt="Thematic Trends Word Cloud" />
         <Paragraph>
           The word cloud represents the experiences of culture, identity, and power found in the student narratives. 
           These words are directly from the data set and represent the values and hardships of a diverse group of student engineers.
@@ -68,7 +68,7 @@ export default function VisualizationPage() {
 
       <ContainerVisulization>
         <Header>Thematic Coding Map</Header>
-        <Image src="/ThematicTrends.png" alt="Thematic Coding Map" />
+        <Image src="/wordcloud.png" alt="Thematic Coding Map" />
         <Paragraph>
           The thematic coding map depicts the interactions between identity, experience, and recommendations for change.
         </Paragraph>

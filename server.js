@@ -148,7 +148,7 @@ app.post("/proxy/api/interviews", async (req, res) => {
           // Add any other headers required by the API
         },
         // Increase axios timeout if needed
-        timeout: 30000
+        timeout: 120000    // Increased to 120000 from 30000
       }
     );
     console.log("Proxy response:", response.data);
