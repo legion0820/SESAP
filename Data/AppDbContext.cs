@@ -9,11 +9,5 @@ namespace CapstoneController.Data{
 
         public DbSet<Interviews> Interviews => Set<Interviews>();
 
-        public DbSet<Mentions> Mentions => Set<Mentions>();
-
-        public DbSet<Suggestions> Suggestions => Set<Suggestions>();
-
-        public DbSet<Themes> Themes => Set<Themes>();
-
     }
 }
