@@ -34,12 +34,12 @@ Figure 6. Bar chart of new site. <br/>
 
 
 ## Technical Implementation
-Key Technologies
-Frontend: React.js, Google Sign-In
-Backend: .NET, MySQL
-Transcript Analysis: Python, LangChain, Chroma, OpenRouter API (Mistral LLM Model)
-Visualizations: MATLAB chart outputs
-Database: MySQL database hosted through Aiven
+Key Technologies <br/>
+Frontend: React.js, Google Sign-In <br/>
+Backend: .NET, MySQL <br/>
+Transcript Analysis: Python, LangChain, Chroma, OpenRouter API (Mistral LLM Model) <br/>
+Visualizations: SciPy chart outputs <br/>
+Database: MySQL database hosted through Aiven <br/>
 
 ## Architecture Overview
 This project is split up into multiple components, each with its own functionality and purpose. 
