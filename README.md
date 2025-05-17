@@ -62,25 +62,25 @@ Here is the link to the SESAP website [Insert link once deployed].
 
 For the front end you would need to install react and its dependencies to run the front end. 
 
-Run “npm install” in the terminal
-Run  “npm install react”
-Run  “npm install react-dom”
-Run  “npm install react-router-dom”
-Run  “npm install @emotion/react”
-Run  “npm install @emotion/styled”
-Run  “npm install axios”
-To run the backend server you would need to run “npm install express multer cors axios”
+Run “npm install” in the terminal <br/>
+Run  “npm install react” <br/>
+Run  “npm install react-dom” <br/>
+Run  “npm install react-router-dom” <br/>
+Run  “npm install @emotion/react” <br/>
+Run  “npm install @emotion/styled” <br/>
+Run  “npm install axios” <br/>
+To run the backend server you would need to run “npm install express multer cors axios” <br/>
 There is a requirements.txt file included that lists all dependencies needed as well. 
 
 #### Controller 
 
 For the controller you will need to download the .NET SDK along with storing user-secrets to set the database connection string 
 
-Go to the Microsoft .NET SDK download page and install version 6.
-In a terminal, run “dotnet user-secrets init”
-Run “dotnet user-secrets set “ConnectionStrings:AivenMySQL" "UserSecret"”
-Run “dotnet build”
-Run “dotnet run”
+Go to the Microsoft .NET SDK download page and install version 6. <br/>
+In a terminal, run “dotnet user-secrets init” <br/>
+Run “dotnet user-secrets set “ConnectionStrings:AivenMySQL" "UserSecret"” <br/>
+Run “dotnet build” <br/>
+Run “dotnet run” <br/>
 
 
 
