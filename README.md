@@ -6,10 +6,9 @@ Automatic analysis is done on interviews from these students with the findings u
 
 ## Core Features
 The SESAP system’s main features are its interview archiving ability and automatic chart generation. Whitelisted users are allowed to submit new student interviews to the archive as is shown in the video below.
-[Embed youtube video demonstrating process]
+<iframe id="kaltura_player" src='https://cdnapisec.kaltura.com/p/391241/embedPlaykitJs/uiconf_id/44855082?iframeembed=true&amp;entry_id=1_y9ics7kk&amp;config%5Bprovider%5D=%7B%22widgetId%22%3A%221_95cbfwnz%22%7D&amp;config%5Bplayback%5D=%7B%22startTime%22%3A0%7D'  style="width: 400px;height: 225px;border: 0;" allowfullscreen webkitallowfullscreen mozAllowFullScreen allow="autoplay *; fullscreen *; encrypted-media *" sandbox="allow-downloads allow-forms allow-same-origin allow-scripts allow-top-navigation allow-pointer-lock allow-popups allow-modals allow-orientation-lock allow-popups-to-escape-sandbox allow-presentation allow-top-navigation-by-user-activation" title="SESAP Interview Submission Process"></iframe>
 
 Once the interview is submitted, the transcript file is automatically analyzed and the findings are then sent to the chart generator and the charts on the visualization page are updated in real time.
-[Insert images of graphs]
 
 ## Previous site
 The previous SESAP website also served as an archive and provided visualizations, but everything had to be manually embedded in the code. We also aimed to make the site design a little cleaner and specifically declutter the narratives page.
@@ -32,8 +31,6 @@ Figure 5. Bar chart of previous site. <br/>
 <img width="630" alt="image" src="https://github.com/user-attachments/assets/034214af-bfc8-48aa-92ea-12ff75b37627" /> <br/>
 Figure 6. Bar chart of new site. <br/>
 
-
-[Show comparison of before and after screenshots]
 
 ## Technical Implementation
 Key Technologies
