@@ -32,3 +32,59 @@ Transcript Analysis: Python, LangChain, Chroma, OpenRouter API (Mistral LLM Mode
 Visualizations: MATLAB chart outputs
 Database: MySQL database hosted through Aiven
 
+## Architecture Overview
+This project is split up into multiple components, each with its own functionality and purpose. 
+
+#### React Frontend UI 
+Serves the content of the website, where users can view the different visualizations, narratives (interviews), purpose, and Recommendations. If a whitelisted user (which is verified via Google Sign-in) tries to post an interview, it sends a request to the backend controller with all of the required parameters. The same logic is applied if one of these users tries to delete an interview as well
+
+#### Backend Controller
+Acts as the routing capability 
+
+## Access and Usage
+General users can visit the website to view the student interviews or look over the visualizations. If you are a whitelisted user working with the project, then you are allowed to submit new interviews to the archive. As it's a website, no download is needed.
+
+Here is the link to the SESAP website [Insert link once deployed].
+
+#### Front end
+
+For the front end you would need to install react and its dependencies to run the front end. 
+
+Run “npm install” in the terminal
+Run  “npm install react”
+Run  “npm install react-dom”
+Run  “npm install react-router-dom”
+Run  “npm install @emotion/react”
+Run  “npm install @emotion/styled”
+Run  “npm install axios”
+To run the backend server you would need to run “npm install express multer cors axios”
+
+#### Controller 
+
+For the controller you will need to download the .NET SDK along with storing user-secrets to set the database connection string 
+
+Go to the Microsoft .NET SDK download page and install version 6.
+In a terminal, run “dotnet user-secrets init”
+Run “dotnet user-secrets set “ConnectionStrings:AivenMySQL" "UserSecret"”
+Run “dotnet build”
+Run “dotnet run”
+
+
+
+## Contact Information
+If you have any questions, or want to provide feedback to the project, do not hesitate to reach out!
+
+#### Project Manager:
+Rachael Cate ()
+
+#### Team Members:
+
+Daniel Morden - Transcript Analysis Developer (mordend@oregonstate.edu)
+
+Leon Ong - Frontend developer (ongl@oregonstate.edu)
+
+Neal Ornes - Microcontroller Developer (ornesn@oregonstate.edu)
+
+Fernando Valle - Database designer (vallefe@oregonstate.edu) 
+
+
