@@ -1,3 +1,7 @@
+---
+title: SESAP Project Overview
+---
+
 # Student Experience Story Archive Project (SESAP)
 
 ## What is the SESAP Project?
