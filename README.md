@@ -60,6 +60,7 @@ Here is the link to the SESAP website [Insert link once deployed].
 
 #### Front end
 
+If you were to run it locally, these following steps walk you through that.
 For the front end you would need to install react and its dependencies to run the front end. 
 
 Run “npm install” in the terminal <br/>
