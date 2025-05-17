@@ -15,19 +15,22 @@ Once the interview is submitted, the transcript file is automatically analyzed a
 The previous SESAP website also served as an archive and provided visualizations, but everything had to be manually embedded in the code. We also aimed to make the site design a little cleaner and specifically declutter the narratives page.
 
 <img width="630" alt="image" src="https://github.com/user-attachments/assets/cebed398-db62-430d-8415-b44c07bbefb0" />
-Figure 1. Narratives page of the old site.
+\nFigure 1. Narratives page of the old site.
 
 <img width="630" alt="image" src="https://github.com/user-attachments/assets/0287893e-c20a-435e-a579-190545017b58" />
-Figure 2. Narratives page of the new site.
+\nFigure 2. Narratives page of the new site.
 
 <img width="630" alt="image" src="https://github.com/user-attachments/assets/07288bbe-6021-47aa-993b-7fb8ee9152f8" />
-Figure 3. Word cloud of previous site.
+\nFigure 3. Word cloud of previous site.
+
+<img width="630" alt="image" src="https://github.com/user-attachments/assets/50f7a253-5048-4346-8eb0-5bb4b10688f8" />
+\nFigure 4. World cloud of new site.
 
 <img width="630" alt="image" src="https://github.com/user-attachments/assets/7f8e8888-7391-4470-99c1-b658609b7ad5" />
-Figure 5. World cloud of previous site. 
+\nFigure 5. Bar chart of previous site. 
 
-
-
+<img width="630" alt="image" src="https://github.com/user-attachments/assets/034214af-bfc8-48aa-92ea-12ff75b37627" />
+\nFigure 6. Bar chart of new site.
 
 
 [Show comparison of before and after screenshots]
