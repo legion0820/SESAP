@@ -67,6 +67,7 @@ Run  “npm install @emotion/react”
 Run  “npm install @emotion/styled”
 Run  “npm install axios”
 To run the backend server you would need to run “npm install express multer cors axios”
+There is a requirements.txt file included that lists all dependencies needed as well. 
 
 #### Controller 
 
