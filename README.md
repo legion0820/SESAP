@@ -7,7 +7,7 @@ Automatic analysis is done on interviews from these students with the findings u
 ## Core Features
 The SESAP system’s main features are its interview archiving ability and automatic chart generation. Whitelisted users are allowed to submit new student interviews to the archive as is shown in the video below.
 
-[![Watch the video](https://img.youtu.be/-_LrM5NgOdU/maxresdefault.jpg](https://youtu.be/-_LrM5NgOdU) <br/>
+[Watch the video](https://youtu.be/-_LrM5NgOdU) <br/>
 
 Once the interview is submitted, the transcript file is automatically analyzed and the findings are then sent to the chart generator and the charts on the visualization page are updated in real time.
 
