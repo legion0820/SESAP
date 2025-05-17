@@ -84,7 +84,7 @@ Run “dotnet run”
 If you have any questions, or want to provide feedback to the project, do not hesitate to reach out!
 
 #### Project Manager:
-Rachael Cate ()
+Rachael Cate (rachael.cate@oregonstate.edu)
 
 #### Team Members:
 
