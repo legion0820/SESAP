@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import styled from "@emotion/styled";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
+
+
 
 // Button Component
 const Button = ({ onClick, children, type }) => {
@@ -267,6 +270,42 @@ function NarrativePage() {
   const [selectedThemes, setSelectedThemes] = useState([]);
   const [interviewDate, setInterviewDate] = useState("");
   const [textFiles, setTextFiles] = useState([]);
+  ////////
+  const [userEmail, setUserEmail] = useState(null);
+  const [whitelistEmails, setWhitelistEmails] = useState([]); // store emails here
+  const whitelist = ["vallefe@oregonstate.edu"]; 
+
+  // Decode JWT and set user email
+  useEffect(() => {
+    const token = localStorage.getItem("userToken");
+    if (token) {
+      try {
+        const decoded = jwtDecode(token);
+        if (decoded && decoded.email) {
+          setUserEmail(decoded.email);
+        }
+      } catch (e) {
+        console.error("Failed to decode token:", e);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    const fetchWhitelist = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/whitelist");
+        // Assuming response.data = array of { email: "user@example.com", ... }
+        const emails = response.data.map(user => user.email.toLowerCase());
+        setWhitelistEmails(emails);
+      } catch (error) {
+        console.error("Failed to fetch whitelist emails:", error);
+      }
+    };
+
+    fetchWhitelist();
+  }, []);
+
+  const isWhitelisted = userEmail && whitelistEmails.includes(userEmail.toLowerCase());
 
   // Fetch narratives on component mount
   useEffect(() => {
@@ -415,7 +454,9 @@ function NarrativePage() {
             ))}
           </CheckboxContainer>
         </Theme>
-        <Button onClick={() => setIsModalOpen(true)}>Add New Narrative</Button>
+        {isWhitelisted ? (
+          <Button onClick={() => setIsModalOpen(true)}>Add New Narrative</Button>
+        ) : null}
       </Filter>
       <Dialog open={isModalOpen} onOpenChange={handleModalClose}>
         <DialogContent>

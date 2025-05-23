@@ -9,5 +9,7 @@ namespace CapstoneController.Data{
 
         public DbSet<Interviews> Interviews => Set<Interviews>();
 
+        public DbSet<WhitelistedUsers> WhitelistedUsers => Set<WhitelistedUsers>();
+
     }
 }

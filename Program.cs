@@ -137,6 +137,12 @@ app.MapGet("api/v1/interviews", async (ICapstoneRepo repo, IMapper mapper) => {
     return Results.Ok(mapper.Map<IEnumerable<InterviewDto>>(interviews));
 });
 
+/* Gets all the interviews from the database to the frontend */
+app.MapGet("api/v1/whitelistedUsers", async (ICapstoneRepo repo, IMapper mapper) => {
+    var whitelistedUsers = await repo.GetAllWhitelistedUsers();
+    return Results.Ok(mapper.Map<IEnumerable<WhitelistedUsersDto>>(whitelistedUsers));
+});
+
 app.Run();
 
 

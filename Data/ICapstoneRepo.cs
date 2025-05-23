@@ -12,5 +12,7 @@ namespace CapstoneController.Data{
 
         void DeleteInterview(Interviews interviews);
 
+        Task<IEnumerable<WhitelistedUsers>> GetAllWhitelistedUsers();
+
     }
 }

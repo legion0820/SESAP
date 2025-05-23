@@ -9,6 +9,9 @@ namespace CapstoneController.Profiles{
             CreateMap<InterviewDto, Interviews>();
             CreateMap<Interviews, InterviewDto>();
 
+            CreateMap<WhitelistedUsersDto, WhitelistedUsers>();
+            CreateMap<WhitelistedUsers, WhitelistedUsersDto>();
+
         }
     }
 }

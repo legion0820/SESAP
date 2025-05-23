@@ -38,5 +38,9 @@ namespace CapstoneController.Data{
             _context.Interviews.Remove(interviews);
         }
 
+        public async Task<IEnumerable<WhitelistedUsers>> GetAllWhitelistedUsers(){
+            return await _context.WhitelistedUsers.ToListAsync();
+        }
+
     }
 }

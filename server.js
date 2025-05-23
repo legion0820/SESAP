@@ -162,6 +162,18 @@ app.post("/proxy/api/interviews", async (req, res) => {
   }
 });
 
+// Fetch all whitelisted users from the external API
+app.get("/api/whitelist", async (req, res) => {
+  try {
+    const response = await axios.get("http://localhost:5084/api/v1/whitelistedUsers");
+    const whitelistUsers = response.data;  // assuming array of user objects with email field
+    res.json(whitelistUsers);
+  } catch (error) {
+    console.error("Error fetching whitelisted users:", error);
+    res.status(500).json({ error: "Failed to fetch whitelisted users" });
+  }
+});
+
 // Start the server
 app.listen(5000, () => {
   console.log("Server is running on port 5000");
